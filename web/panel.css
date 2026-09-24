@@ -1484,6 +1484,11 @@ body.legend-hovered #panel-legend {
   min-width: 0;
 }
 
+.ob-input-row input[readonly] {
+  cursor: default;
+  user-select: none;
+}
+
 .ob-input-row input::placeholder {
   color: rgba(0, 0, 0, 0.35);
 }

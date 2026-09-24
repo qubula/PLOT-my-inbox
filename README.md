@@ -96,7 +96,7 @@ PLOT transforms your email inbox into a **navigable world**. Unlike traditional 
 
 ## Try it
 
-Open [**plot-demo.netlify.app**](https://plot-demo.netlify.app/) in a desktop browser. The email address is pre-filled, so click through sign-in, skip or follow the guided tour, and press Enter to step into a Theme.
+Open [**plot-demo.netlify.app**](https://plot-demo.netlify.app/) in a desktop browser. It opens on a demo account with no log in required: click the arrow, skip or follow the guided tour, and press Enter to step into a Theme.
 
 <sub>PLOT is designed for desktop and needs a mouse and keyboard. The chat assistant only answers when `server.py` and Ollama are running on your own machine.</sub>
 
