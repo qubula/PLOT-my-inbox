@@ -8,9 +8,9 @@
 <br>
 <br>
 
-**Your inbox, mapped by meaning instead of by date.**
+**The email inbox as a navigable world.**
 <br>
-A proof of concept that turns an email inbox into a world you can explore.
+A proof of concept that groups email into clusters of increasing specificity, from broad themes down to individual topics.
 
 <br>
 
@@ -57,7 +57,9 @@ A proof of concept that turns an email inbox into a world you can explore.
 
 ## The idea
 
-PLOT transforms your email inbox into a **navigable world**. Unlike traditional email inboxes where emails are shown in a rigid tabular layout from newest to oldest, PLOT groups emails by **semantic themes**, so you can understand what your inbox contains at a glance and explore the topics and themes it has accumulated over time.
+PLOT transforms the email inbox into a **navigable world**. Unlike traditional inboxes, where emails are arranged in rigid chronological lists, PLOT groups them into clusters of increasing specificity. The deeper users explore, the more detailed the information becomes, moving from broad themes to individual topics.
+
+Arranged in radial layouts rather than rows, it makes large volumes of email easier to navigate, organise, and manage. By revealing patterns built up over years of use, PLOT helps people better understand, curate, and take control of their digital archives.
 
 **How it plays out:** you open PLOT and see your whole inbox as a handful of Themes. Step into one and it splits into Spaces, then into Clusters of closely related emails, each with a plain-English title and summary. Inside a Cluster, every email is a dot on a ring, grouped into colour-coded conversation threads. Click one to read it, or reshape the Cluster by hand: group, split, archive or delete. Delete enough and the tree in the corner starts to grow.
 
