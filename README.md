@@ -45,7 +45,7 @@ A proof of concept that turns an email inbox into a world you can explore.
 
 <br>
 
-## See it in action
+## See it in action: Video Walkthrough
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=20Sa4PoC53U">
