@@ -178,8 +178,8 @@ flowchart LR
 The app is static, so any web server works as long as `web/` is the site root:
 
 ```bash
-git clone https://github.com/qubula/PLOT.git
-cd PLOT/web
+git clone https://github.com/qubula/PLOT-my-inbox.git
+cd PLOT-my-inbox/web
 python3 -m http.server 8000
 ```
 
@@ -188,7 +188,7 @@ Open <http://localhost:8000>.
 To use the chat assistant as well, run the Flask server instead. It serves the same app and adds the chat endpoint:
 
 ```bash
-cd PLOT
+cd PLOT-my-inbox
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -205,7 +205,7 @@ Open <http://localhost:5001>.
 The notebook regenerates everything in `web/output/`. Download `email_dataset.json` from the [dataset page](https://huggingface.co/datasets/imnim/multiclass-email-classification) and save it as `pipeline/data/MultiClasssEmail Dataset.json`. Then:
 
 ```bash
-cd PLOT
+cd PLOT-my-inbox
 pip install -r pipeline/requirements.txt
 cp .env.example .env
 jupyter notebook pipeline/email_semantics.ipynb
