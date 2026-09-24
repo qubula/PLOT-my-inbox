@@ -1,0 +1,2226 @@
+/* ── Custom cursor ────────────────────────────────────────────────── */
+
+body {
+  margin: 0;
+  background: #1C1C1C;
+  /* default: Themes (darkest) — canvas overrides each frame */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  cursor: none !important;
+}
+
+/* Suppress native cursor on all elements — overrides inline styles p5.js may set.
+   body.ob-active * and body:has(#tour-guide.tour-visible) * are more specific
+   so they still restore the system cursor during onboarding / tour. */
+body * {
+  cursor: none !important;
+}
+
+#view-title {
+  position: fixed;
+  top: 20px;
+  left: 360px;
+  right: 360px;
+  z-index: 50;
+  pointer-events: none;
+  text-align: center;
+  user-select: none;
+}
+
+#view-breadcrumb {
+  color: #E8E8E8;
+  font-family: Inter, sans-serif;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 1.5;
+  min-height: 1.2em;
+  word-break: break-word;
+  transition: color 0.4s ease;
+}
+
+#view-breadcrumb .bc-current {
+  font-weight: 500;
+  display: block;
+  margin-top: 1px;
+}
+
+#view-label {
+  color: #E8E8E8;
+  font-family: Inter, sans-serif;
+  font-size: 29px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin-top: 6px;
+  transition: color 0.4s ease;
+}
+
+body.view-clusters #view-breadcrumb,
+body.view-clusters #view-label {
+  color: #000;
+}
+
+canvas {
+  display: block;
+  cursor: none !important; /* p5.js can set inline cursor styles — override them */
+}
+
+.panel-container,
+.panel-container *,
+.email-detail-container,
+.email-detail-container *,
+#chat-panel,
+#chat-panel *,
+.icon-panel,
+.icon-panel *,
+#icon-group-right,
+#icon-group-bottom-left,
+#icon-slot-chat,
+button,
+input,
+a,
+select,
+textarea {
+  cursor: none; /* keep system cursor hidden; ptrEl in cursor.js handles the visual */
+}
+
+#custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: #D9D9D9;
+  width: 24px;
+  min-height: 24px;
+  border-radius: 12px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  transition: background 0.15s ease,
+    width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    padding 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    min-height 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.15s ease;
+}
+
+#cursor-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #000;
+  white-space: nowrap;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  user-select: none;
+}
+
+#custom-cursor.pill {
+  padding: 7px 17px;
+}
+
+#custom-cursor.pill #cursor-label {
+  opacity: 1;
+}
+
+
+/* ── Icon button base ─────────────────────────────────────────────── */
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 65px;
+  height: 53px;
+  background: #CFCECE;
+  border: none;
+  border-radius: 8px;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.icon-btn svg {
+  width: 100%;
+  height: 100%;
+}
+
+.icon-btn:hover,
+.icon-btn.active {
+  background: #BFBEBE;
+}
+
+/* ── Arrow icon (top-left) ────────────────────────────────────────── */
+
+#icon-arrow {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 99;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+#icon-arrow.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Left panels ──────────────────────────────────────────────────── */
+
+.panel-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 99;
+  background: #D9D9D9;
+  border-radius: 8px;
+  display: none;
+  min-width: 220px;
+  max-width: 370px;
+}
+
+.panel-container.active {
+  display: block;
+  transition: opacity 0.18s ease;
+}
+
+/* Fade out left panel while the user hovers the palm tree or legend */
+body.tree-hovered .panel-container.active,
+body.legend-hovered .panel-container.active {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.panel-content {
+  padding: 20px 18px 36px;
+  /* extra bottom padding clears the minimize button */
+  max-height: calc(100vh - 20px - 53px - 20px - 20px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 2px;
+}
+
+.panel-minimize-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  opacity: 1;          /* fully black by default */
+  transition: opacity 0.15s ease;
+  line-height: 0;
+}
+
+.panel-minimize-btn:hover {
+  opacity: 0.35;       /* dims on hover */
+}
+
+.panel-minimize-btn svg {
+  display: block;
+  width: 16px;
+  height: auto;
+}
+
+.panel-back-btn {
+  display: none;
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 300;
+  font-size: 11px;
+  color: #000;
+  cursor: pointer;
+  line-height: normal;
+}
+
+.panel-back-btn:hover {
+  opacity: 0.5;
+}
+
+.panel-back-btn.visible {
+  display: block;
+}
+
+.panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.panel-title {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 400;
+  font-size: 16px;
+  font-style: normal;
+  color: #000;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+}
+
+.panel-description {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 300;
+  font-size: 11px;
+  font-style: normal;
+  color: #000;
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* Editable description — cursor and focus */
+.panel-description.pd-editable {
+  outline: none;
+  cursor: text;
+  min-height: 1.5em;
+}
+
+/* Placeholder shown when the field is empty */
+.panel-description.pd-editable.pd-empty::before {
+  content: attr(data-placeholder);
+  color: rgba(0, 0, 0, 0.3);
+  font-style: italic;
+  pointer-events: none;
+}
+
+.panel-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.25);
+  width: 100%;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.panel-chevron {
+  display: flex;
+  justify-content: center;
+  width: 16px;
+  height: 10px;
+  align-self: center;
+}
+
+.panel-chevron svg {
+  display: block;
+}
+
+/* Embedded emails section */
+.embedded-section,
+.threads-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-title {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 400;
+  font-size: 16px;
+  font-style: normal;
+  color: #000;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+}
+
+/* Embedded emails section toggle */
+.embedded-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.embedded-toggle-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  line-height: 0;
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.15s ease, transform 0.25s ease;
+}
+
+.embedded-toggle-btn:hover {
+  opacity: 1;
+}
+
+/* Chevron rotates when expanded */
+.embedded-section.expanded .embedded-toggle-btn {
+  transform: rotate(180deg);
+}
+
+/* Grid hidden when collapsed */
+.embedded-section.collapsed .emails-grid {
+  display: none;
+}
+
+.emails-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 20px;
+  width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.emails-grid::-webkit-scrollbar {
+  width: 3px;
+}
+
+.emails-grid::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.threads-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.email-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 58px;
+}
+
+.email-canvas {
+  display: block;
+  width: 52px;
+  height: 52px;
+  image-rendering: auto;
+  background: transparent;
+}
+
+.email-label {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 300;
+  font-size: 11px;
+  font-style: normal;
+  color: #000;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+  word-break: break-word;
+  width: 100%;
+}
+
+/* ── Right panel stack ────────────────────────────────────────────── */
+
+#right-panel-stack {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 98;
+  width: 320px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  /* max-height and overflow set in the override block below */
+  box-sizing: border-box;
+}
+
+#right-panel-stack.active {
+  display: flex;
+}
+
+/* Hide 3 info icons only when inside a specific cluster — visible in clusters overview */
+body.view-sub-cluster #icon-group-right {
+  display: none;
+}
+
+.right-panel {
+  background: #D9D9D9;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: none;
+  box-sizing: border-box;
+}
+
+.right-panel.active {
+  display: block;
+}
+
+.right-panel-content {
+  padding: 16px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.right-panel-title {
+  font-family: var(--font-family-box-title, Inter);
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.45);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+}
+
+/* Org / sort button rows */
+.rp-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── Organise buttons — 30% larger icons, pure black, no hover ───── */
+
+.org-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  min-width: 0;
+}
+
+/* No hover / active visual — action just fires */
+.org-btn:focus {
+  outline: none;
+}
+
+.org-btn svg {
+  display: block;
+  width: 28px;
+  /* 30% larger than the old 22px */
+  height: auto;
+}
+
+.org-btn span {
+  font-family: var(--font-family-box-title, Inter);
+  font-size: 10px;
+  font-weight: 400;
+  color: #000;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Available: full black — handled by SVG fill="black" */
+/* Disabled: dimmed */
+.org-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+/* ── Sort filter buttons — red when active ────────────────────────── */
+
+.sort-filter-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+}
+
+.sort-filter-btn:focus {
+  outline: none;
+}
+
+.sort-filter-btn svg {
+  display: block;
+  width: 28px;
+  height: auto;
+}
+
+.sort-filter-btn span {
+  font-family: var(--font-family-box-title, Inter);
+  font-size: 10px;
+  font-weight: 400;
+  color: #000;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Active sort mode: icon and label turn red */
+.sort-filter-btn.active path,
+.sort-filter-btn.active circle,
+.sort-filter-btn.active rect,
+.sort-filter-btn.active line {
+  fill: #CC2020;
+  stroke: #CC2020;
+}
+
+.sort-filter-btn.active span {
+  color: #CC2020;
+}
+
+/* ── Email content inside the panel ─────────────────────────────── */
+
+.email-subject {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 400;
+  font-size: 16px;
+  color: #000;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+  word-break: break-word;
+}
+
+.email-detail-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.email-meta-item {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 300;
+  font-size: 11px;
+  color: #444;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+}
+
+.meta-label {
+  font-weight: 400;
+  color: #222;
+  margin-right: 4px;
+}
+
+/* .email-body-container sizing is set in the override block below */
+.email-body-container {
+  overflow-y: auto;
+}
+
+.email-body {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 300;
+  font-size: 11px;
+  color: #000;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* Keep email-detail-container class for any legacy CSS references */
+.email-detail-container {
+  display: contents;
+}
+
+
+/* ── Icon slot — the morphing container ──────────────────────────── */
+
+.icon-slot {
+  position: absolute;
+  width: 65px;
+  height: 53px;
+  background: #CFCECE;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: width 0.4s cubic-bezier(0.34, 1.2, 0.64, 1),
+    height 0.4s cubic-bezier(0.34, 1.2, 0.64, 1),
+    background 0.25s ease;
+}
+
+.icon-slot.open {
+  background: #D9D9D9;
+}
+
+/* Icon button sits at the anchor corner (overridden per group below) */
+.icon-slot>.icon-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 65px;
+  height: 53px;
+  background: transparent;
+  transition: opacity 0.15s ease;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.icon-slot.open>.icon-btn {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Panel content fills the expanded slot */
+.icon-slot>.icon-panel {
+  position: absolute;
+  inset: 0;
+  padding: 16px 20px;
+  box-sizing: border-box;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.08s ease;
+  /* fast on close, no delay */
+  background: transparent;
+  border-radius: 0;
+}
+
+.icon-slot.open>.icon-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.18s ease 0.22s;
+  /* delay on open so slot expands first */
+}
+
+
+/* ── Right icon group ─────────────────────────────────────────────── */
+
+#icon-group-right {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 65px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  /* slots anchor to right edge; expanded slots overflow left */
+}
+
+/* Icons hidden in cluster view — handled by body.view-clusters rule above */
+
+/* Slots in flex flow — override base position:absolute */
+#icon-group-right .icon-slot {
+  position: relative;
+  top: auto;
+  right: auto;
+}
+
+/* Icon anchored top-right so panel grows left + down from that corner */
+#icon-group-right .icon-slot>.icon-btn {
+  top: 0;
+  right: 0;
+  left: auto;
+}
+
+/* Expanded dimensions */
+#icon-slot-info.open {
+  width: 200px;
+  height: 175px;   /* 163px content + 12px breathing room */
+  z-index: 5;
+}
+
+#icon-slot-data.open {
+  width: 178px;
+  height: 53px;
+  z-index: 5;
+}
+
+#icon-slot-facts.open {
+  width: 230px;
+  height: 330px;   /* generous extra room so nothing is clipped */
+  z-index: 5;
+}
+
+/* ── Quick Facts panel ────────────────────────────────────────────── */
+
+.facts-heading {
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.45);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+  line-height: 1;
+}
+
+.fact-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 0;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.12);
+}
+
+.fact-stat {
+  font-family: Inter, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #000;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.fact-desc {
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.55);
+  line-height: 1.35;
+}
+
+/* ── Info / Data stat rows ────────────────────────────────────────── */
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  padding: 2px 0;
+}
+
+.stat-label {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 400;
+  font-size: 16px;
+  font-style: normal;
+  color: #000;
+  line-height: normal;
+}
+
+.stat-value {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 300;
+  font-size: 11px;
+  font-style: normal;
+  color: #000;
+  line-height: normal;
+}
+
+.stat-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.25);
+  margin: 6px 0;
+}
+
+
+/* ── Bottom-left icon group ───────────────────────────────────────── */
+
+#icon-group-bottom-left {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+#icon-help {
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 65px;
+  height: 53px;
+  background: #CFCECE;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+#icon-help:hover {
+  background: #C0BFBF;
+}
+
+#icon-help svg {
+  display: block;
+  width: 20px;
+  height: 35px;
+}
+
+/* Question mark always black — icon has its own #CFCECE background */
+#icon-help path {
+  fill: #000;
+}
+
+/* ── First-time navigation hint ───────────────────────────────────── */
+
+#nav-hint {
+  position: fixed;
+  bottom: 95px;
+  left: 20px;
+  z-index: 150;
+  width: min(420px, calc(100vw - 40px));
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px 40px 18px 22px;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.08);
+  font-family: Inter, sans-serif;
+  /* hidden by default */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(12px);
+}
+
+#nav-hint.nav-hint-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+#nav-hint p {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: rgba(0, 0, 0, 0.75);
+  margin: 0;
+}
+
+#nav-hint p + p {
+  margin-top: 8px;
+}
+
+#nav-hint strong {
+  font-weight: 600;
+  color: #000;
+}
+
+#nav-hint-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: none;
+  font-size: 20px;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  padding: 0;
+}
+
+#nav-hint-close:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Hide during onboarding / guided tour — same pattern as palm tree */
+body.ob-active #nav-hint,
+body:has(#tour-guide.tour-visible) #nav-hint {
+  display: none !important;
+}
+
+/* ── Palm tree + carbon panel ─────────────────────────────────────── */
+
+#palm-tree-container {
+  position: relative;
+  flex-shrink: 0;
+  align-self: flex-end;       /* anchors at bottom as tree grows up */
+}
+
+#palm-tree {
+  line-height: 0;             /* no extra height from inline spacing */
+  transition: opacity 0.25s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#palm-tree svg {
+  display: block;
+}
+
+/* Hide during onboarding / tour — same pattern as custom cursor */
+body.ob-active #palm-tree-container,
+body:has(#tour-guide.tour-visible) #palm-tree-container {
+  display: none;
+}
+
+/* Carbon footprint panel — identical position and chrome to left panels */
+#carbon-panel {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  min-width: 220px;
+  max-width: 370px;
+  background: #D9D9D9;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+  z-index: 200;
+}
+
+#palm-tree-container:hover #carbon-panel {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* No minimize button — remove the 36px clearance from panel-content */
+#carbon-panel .panel-content {
+  padding-bottom: 20px;
+}
+
+/* Disclaimer sits below the last section at reduced opacity */
+.carbon-disclaimer {
+  opacity: 0.4;
+  font-size: 10px !important;
+}
+
+/* Water droplets — overlay on the palm tree, triggered on each deletion */
+#carbon-droplets {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%) translateY(-60px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes carbon-droplets-fall {
+  0%   { opacity: 0;   transform: translateX(-50%) translateY(-60px); }
+  20%  { opacity: 1;   transform: translateX(-50%) translateY(-40px); }
+  70%  { opacity: 0.9; transform: translateX(-50%) translateY(10px);  }
+  100% { opacity: 0;   transform: translateX(-50%) translateY(30px);  }
+}
+
+#carbon-droplets.dropping {
+  animation: carbon-droplets-fall 1s ease-in forwards;
+}
+
+/* Legend slot: in flex-row, position: relative so it participates in flow */
+#icon-slot-legend {
+  position: relative;
+  /* overrides .icon-slot's absolute */
+  flex-shrink: 0;
+}
+
+/* Icon anchored bottom-left — panel grows right + up */
+#icon-slot-legend>.icon-btn {
+  bottom: 0;
+  left: 0;
+  top: auto;
+  right: auto;
+}
+
+/* Legend panel — fixed at top-left, same chrome as left panels */
+#panel-legend {
+  position: fixed;
+  top: 20px;
+  right: auto;
+  bottom: auto;
+  left: 20px;
+  width: 320px;
+  height: auto;
+  background: #D9D9D9;
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 16px 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+  z-index: 200;
+}
+
+body.legend-hovered #panel-legend {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+/* ── Legend panel content (inside icon-slot) ─────────────────────── */
+
+.legend-heading {
+  margin: 0 0 8px;
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 400;
+  font-size: 16px;
+  font-style: normal;
+  color: #000;
+  text-align: center;
+  line-height: normal;
+}
+
+.legend-subtitle {
+  margin: 0 0 10px;
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 300;
+  font-size: 11px;
+  font-style: normal;
+  line-height: normal;
+  color: #333;
+  text-align: center;
+}
+
+.legend-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.25);
+  margin: 10px 0;
+}
+
+.legend-section {
+  margin-bottom: 6px;
+}
+
+.legend-section-title {
+  text-align: center;
+  font-family: var(--font-family-box-title, Inter);
+  font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  margin-bottom: 10px;
+  color: #000;
+  line-height: normal;
+}
+
+.legend-row {
+  display: grid;
+  grid-template-columns: 1fr 24px 1fr;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-caption {
+  font-family: var(--font-family-box-title, Inter);
+  font-size: 11px;
+  font-weight: 300;
+  font-style: normal;
+  color: #444;
+  line-height: normal;
+}
+
+.legend-arrow {
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+.legend-canvas {
+  width: 62px;
+  height: 62px;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ── Legend level background previews ───────────────────────────── */
+
+.legend-levels {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+
+.legend-level-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.legend-preview-canvas {
+  display: block;
+  border-radius: 6px;
+  width: 100%;
+}
+
+.legend-level-label {
+  font: 500 11px/1.2 Inter, sans-serif;
+  color: #000;
+}
+
+.legend-level-sub {
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.legend-sub-heading {
+  font: 600 10px/1 Inter, sans-serif;
+  color: rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+}
+
+
+/* ── Bottom-right chat slot (morph container) ────────────────────── */
+
+#icon-slot-chat {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 301;
+  /* inherits .icon-slot morph styles */
+}
+
+/* Icon anchored bottom-right — panel grows left + up */
+#icon-slot-chat>.icon-btn {
+  bottom: 0;
+  right: 0;
+  top: auto;
+  left: auto;
+}
+
+#icon-slot-chat.open {
+  width: 505px;
+  height: 290px;
+}
+
+/* Chat panel */
+#chat-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 11px;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+
+.chat-rule {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+  width: 100%;
+}
+
+#chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 400;
+  font-size: 16px;
+  font-style: normal;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+#chat-model {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 300;
+  font-size: 11px;
+  font-style: normal;
+  color: #666;
+  line-height: 1;
+}
+
+#chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#chat-messages::-webkit-scrollbar {
+  width: 3px;
+}
+
+#chat-messages::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.chat-msg {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 300;
+  font-size: 11px;
+  font-style: normal;
+  line-height: normal;
+  max-width: 92%;
+}
+
+.chat-msg.user {
+  align-self: flex-end;
+  background: rgba(0, 0, 0, 0.08);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 300;
+}
+
+.chat-msg.bot {
+  align-self: flex-start;
+}
+
+.chat-msg.chat-thinking {
+  color: rgba(0, 0, 0, 0.4);
+  font-style: italic;
+}
+
+.chat-refs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.chat-ref {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-family: var(--font-family-box-title, Inter);
+  font-size: 11px;
+  font-weight: 300;
+  font-style: normal;
+  cursor: pointer;
+}
+
+.chat-ref:hover {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+/* Search result cluster chip — visually distinct from regular nav chips */
+.chat-ref--search {
+  background: rgba(0, 80, 200, 0.10);
+  border-left: 2px solid rgba(0, 80, 200, 0.4);
+}
+.chat-ref--search:hover {
+  background: rgba(0, 80, 200, 0.18);
+}
+
+/* Wrapper: no gap between the rule and the input row so the
+   border-left on #chat-send connects flush to the horizontal rule above */
+#chat-input-section {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+#chat-input-row {
+  display: flex;
+  align-items: stretch;
+  padding: 10px 0;
+}
+
+#chat-input {
+  flex: 1;
+  border: none;
+  padding: 0;
+  font-family: var(--font-family-box-title, Inter);
+  font-size: 11px;
+  font-weight: 300;
+  font-style: normal;
+  line-height: 1;
+  outline: none;
+  background: transparent;
+  color: #000;
+  align-self: center;
+}
+
+#chat-input::placeholder {
+  color: #000;
+}
+
+#chat-send {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  border: none;
+  border-left: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 0 0 0 16px;
+  cursor: pointer;
+  background: transparent;
+  font-size: 14px;
+  color: #000;
+  flex-shrink: 0;
+}
+
+#chat-send:hover {
+  opacity: 0.6;
+}
+
+#chat-send:disabled {
+  color: rgba(0, 0, 0, 0.25);
+  cursor: default;
+}
+
+/* ── Onboarding overlay ───────────────────────────────────────────── */
+
+#onboarding {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: #F5F5F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease;
+  cursor: default;
+}
+
+#onboarding.ob-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Restore system cursor inside overlay */
+#onboarding * {
+  cursor: default;
+}
+
+#onboarding button {
+  cursor: pointer;
+}
+
+#onboarding input {
+  cursor: text;
+}
+
+/* Steps */
+.ob-step {
+  display: none;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ob-step.active {
+  display: flex;
+}
+
+/* Cards */
+.ob-card {
+  max-width: 520px;
+  width: 100%;
+  padding: 0 24px;
+}
+
+.ob-card--wide {
+  max-width: 720px;
+}
+
+/* Typography */
+.ob-eyebrow {
+  font: 400 12px/1 Inter, sans-serif;
+  color: rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin: 0 0 14px;
+}
+
+.ob-heading {
+  font: 500 44px/1.05 Inter, sans-serif;
+  color: #000;
+  margin: 0 0 22px;
+  letter-spacing: -0.02em;
+}
+
+.ob-body {
+  font: 400 15px/1.65 Inter, sans-serif;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 0 0 18px;
+}
+
+.ob-body-sm {
+  font: 400 13px/1.55 Inter, sans-serif;
+  color: rgba(0, 0, 0, 0.5);
+  margin: 0 0 6px;
+}
+
+.ob-label {
+  font: 600 11px/1 Inter, sans-serif;
+  color: #000;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0 0 5px;
+}
+
+.ob-error {
+  font: 400 12px/1.4 Inter, sans-serif;
+  color: #c00;
+  min-height: 18px;
+  margin: 0;
+}
+
+/* Pill input row */
+.ob-input-row {
+  display: flex;
+  align-items: center;
+  background: #E0E0E0;
+  border-radius: 999px;
+  padding: 5px 5px 5px 20px;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.ob-input-row input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font: 400 15px/1 Inter, sans-serif;
+  color: #000;
+  outline: none;
+  min-width: 0;
+}
+
+.ob-input-row input::placeholder {
+  color: rgba(0, 0, 0, 0.35);
+}
+
+.ob-input-row button {
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  width: 42px;
+  height: 42px;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ob-input-row button:hover {
+  background: #333;
+}
+
+/* Primary CTA button */
+.ob-btn-primary {
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 15px 36px;
+  font: 500 15px/1 Inter, sans-serif;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+.ob-btn-primary:hover {
+  background: #333;
+}
+
+/* ── Guided tour card ─────────────────────────────────────────────── */
+
+#tour-guide {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: min(520px, calc(100vw - 40px));
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px 22px 16px;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.08);
+  font-family: Inter, sans-serif;
+  /* hidden by default */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateX(-50%) translateY(12px);
+}
+
+#tour-guide.tour-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+#tour-guide.tour-hidden-out {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(12px);
+}
+
+#tour-text {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: rgba(0, 0, 0, 0.75);
+  margin: 0 0 14px;
+}
+
+#tour-text strong {
+  font-weight: 600;
+  color: #000;
+}
+
+.tour-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+#tour-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.tour-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.18);
+  transition: background 0.2s ease;
+}
+
+.tour-dot--active {
+  background: #000;
+}
+
+.tour-btns {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#tour-skip {
+  background: none;
+  border: none;
+  font: 400 13px/1 Inter, sans-serif;
+  color: rgba(0, 0, 0, 0.35);
+  padding: 0;
+  cursor: pointer;
+}
+
+#tour-skip:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.tour-next-btn {
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 9px 20px;
+  font: 500 13px/1 Inter, sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tour-next-btn:hover {
+  background: #333;
+}
+
+/* ── Global typography: Roboto Mono for body, Inter 600 for titles ── */
+
+/* Switch all var(--font-family-box-title) elements to Roboto Mono */
+:root {
+  --font-family-box-title: 'Roboto Mono', monospace;
+}
+
+/* Titles stay Inter at weight 600 */
+.panel-title,
+.section-title,
+.right-panel-title,
+.legend-heading,
+.legend-section-title,
+.legend-sub-heading,
+.legend-level-label,
+.ob-heading,
+.ob-label {
+  font-family: Inter, sans-serif !important;
+  font-weight: 600 !important;
+}
+
+/* ── PLOT landing title ─────────────────────────────────────────── */
+
+.ob-plot-title {
+  font-family: 'Rubik Mono One', sans-serif;
+  font-size: 192px;
+  font-weight: 400;
+  letter-spacing: -7.7px;
+  color: #000;
+  line-height: 0.92;
+  margin: 0 0 36px;
+}
+
+/* Landing card: single grid column sized to min-content.
+   Grid tracks resolve min-content as the max of all items' min-content sizes.
+   "PLOT" is one non-breaking word so its min-content = its full rendered width,
+   which is larger than any other item's min-content. All items then stretch to
+   fill that column, giving every element the same width as the PLOT heading.
+   padding: 0 so the column edge = the glyph edge. */
+.ob-card--landing {
+  display: grid;
+  grid-template-columns: min-content;
+  justify-content: center;
+  padding: 0;
+  max-width: 90vw;
+}
+
+/* Auth card: centered, generous vertical space */
+.ob-card--auth {
+  text-align: center;
+}
+
+.ob-card--auth .ob-btn-primary {
+  margin-top: 20px;
+}
+
+/* Small label above the email input */
+.ob-input-label {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.45);
+  margin: 0 0 10px;
+}
+
+/* Body text in onboarding → Roboto Mono */
+.ob-body,
+.ob-body-sm {
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* Tour guide text → Roboto Mono */
+#tour-text {
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* Quick facts → Roboto Mono for descriptions */
+.fact-desc,
+.fact-stat {
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* ── Step 3: Welcome to your PLOT ───────────────────────────────── */
+
+.ob-welcome-sub {
+  font-family: 'Rubik', sans-serif;
+  font-size: 54.737px;
+  font-weight: 400;
+  letter-spacing: -2.189px;
+  color: #000;
+  text-align: center;
+  margin: 0;
+  line-height: normal;
+}
+
+.ob-plot-title--center {
+  text-align: center;
+}
+
+.ob-card--welcome {
+  max-width: 700px;
+  text-align: center;
+}
+
+.ob-card--welcome .ob-body {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ob-card--welcome .ob-btn-primary {
+  margin-top: 32px;
+}
+
+/* ── Suppress all system cursors; JS custom cursors handle feedback ── */
+
+*,
+*::before,
+*::after {
+  cursor: none !important;
+}
+
+/* Restore system cursors during onboarding (login overlay only) */
+body.ob-active,
+body.ob-active * {
+  cursor: default !important;
+}
+
+body.ob-active button {
+  cursor: pointer !important;
+}
+
+body.ob-active input[type="email"],
+body.ob-active input[type="text"] {
+  cursor: text !important;
+}
+
+/* Hide custom cursor elements during onboarding login overlay only.
+   During the guided tour the dot cursor stays active so cluster hover
+   labels work for users who ignore the tour without pressing skip. */
+body.ob-active #custom-cursor,
+body.ob-active #cursor-ptr,
+body.ob-active #cursor-text {
+  display: none !important;
+}
+
+/* ── Custom pointer cursor ────────────────────────────────────────── */
+
+#cursor-ptr {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  /* Align SVG hotspot (top of finger, ~6px in from left) with actual cursor */
+  transform: translate(-6px, -2px);
+  opacity: 0;
+  transition: opacity 0.08s ease;
+}
+
+#cursor-ptr.active {
+  opacity: 1;
+}
+
+/* Text caret — thin vertical line shown over readable text in panels */
+#cursor-text {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  width: 1.5px;
+  height: 17px;
+  background: #9D9D9D;
+  border-radius: 1px;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+#cursor-text.active {
+  opacity: 1;
+}
+
+/* ── Email colour swatches ────────────────────────────────────────── */
+
+.color-swatch-row {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+}
+
+.color-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  flex-shrink: 0;
+  padding: 0;
+  transition: transform 0.12s ease, opacity 0.15s ease;
+}
+
+.color-swatch:disabled {
+  opacity: 0.3;
+}
+
+.color-swatch:not(:disabled):hover {
+  transform: scale(1.15);
+}
+
+/* Gradient "custom" swatch */
+.color-swatch--custom {
+  background: conic-gradient(#3797B8, #E6D539, #CD3D5C, #FF9FD4, #E8A26B, #FF4A00, #3797B8);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hidden native colour input fills the button — click triggers the picker */
+.color-swatch--custom input[type="color"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+}
+
+/* view-title stays visible during the tour — it's part of the experience */
+
+/* Hide right-hand panels while the chat is open to avoid overlap */
+body.chat-is-open #right-panel-stack { display: none !important; }
+
+/* ── Right panel stack: cap height above the chat icon ──────────── */
+/* Adjust the subtracted value (103px = 20 top + 53 chat + 10 gap + 20 bottom) */
+/* Stack: never scrolls — only the email body inside scrolls */
+#right-panel-stack {
+  max-height: calc(100vh - 103px);
+  overflow: hidden; /* no stack scroll — email body handles long content */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Organise and Sort panels: fixed natural height, never shrink */
+#organise-panel, #sort-panel { flex: 0 0 auto; }
+
+/* Email panel: grows to fill whatever space the stack has left
+   after organise + sort, so the body can use as much room as possible */
+#email-detail-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Override .right-panel.active {display:block} so height:100% propagates correctly */
+#email-detail-panel.active {
+  display: flex;
+  flex-direction: column;
+}
+
+#email-detail-panel .right-panel-content {
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+/* Email body: fills remaining space, scrolls when long */
+.email-body-container {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* ── Expand button: locked at bottom, never scrolls away ──────── */
+.email-panel-actions {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 6px;
+}
+
+.email-panel-actions button,
+.email-modal-actions button {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  opacity: 1;        /* fully black by default */
+  line-height: 0;
+  transition: opacity 0.15s ease;
+}
+
+.email-panel-actions button:hover,
+.email-modal-actions button:hover {
+  opacity: 0.4;      /* dims on hover */
+}
+
+/* ── Compact delete row ─────────────────────────────────────────── */
+/* Section label inside organise panel (e.g. "Delete") */
+.rp-section-label {
+  font-family: var(--font-family-box-title, Inter);
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.38);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 2px 0 4px;
+  line-height: 1;
+}
+
+/* ── Tour step target highlight ─────────────────────────────────── */
+/* Added to the element the current tour step is describing */
+.tour-target {
+  position: relative;
+  border-radius: 8px;
+  animation: tourPulse 1.8s ease-in-out infinite;
+}
+
+.tour-target::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 2px solid rgba(0,0,0,0.55);
+  border-radius: 10px;
+  animation: tourPulseRing 1.8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 999;
+}
+
+@keyframes tourPulseRing {
+  0%, 100% { opacity: 0.7; }
+  50%       { opacity: 0.2; }
+}
+
+.rp-row--compact {
+  gap: 4px;
+}
+
+.org-btn--sm {
+  width: 44px;
+  gap: 5px;
+}
+
+.org-btn--sm svg {
+  width: 30px;
+  height: auto;
+}
+
+.org-btn--sm span {
+  font-size: 9px;
+}
+
+/* ── Expanded email modal ─ 3-column focused view ───────────────── */
+#email-expanded-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 450;
+  display: none;
+  flex-direction: column;
+  background: #383838;
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+#email-expanded-modal.active { display: flex; }
+
+#email-modal-grid {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  flex: 1;
+  min-height: 0;
+  align-items: flex-start;
+}
+
+/* Each column panel */
+.email-modal-col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Left column: Notes + Highlight Notes stacked vertically */
+#email-modal-left-col {
+  flex: 0 0 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  align-items: stretch;
+}
+
+/* Notes panel: no longer needs its own flex sizing — column handles it */
+#email-modal-notes-panel {
+  flex: 0 0 auto;
+}
+
+/* Highlight Notes panel — hidden until text is selected or highlight clicked */
+#email-modal-highlight-notes-panel {
+  display: none;
+}
+
+#email-modal-highlight-notes-panel.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Active colour swatch — ring indicates current highlight colour */
+.color-swatch.active-color {
+  box-shadow: 0 0 0 2.5px rgba(0, 0, 0, 0.7);
+  transform: scale(1.08);
+}
+
+/* Highlight Notes textarea */
+#email-modal-highlight-notes {
+  width: 100%;
+  min-height: 60px;
+  resize: none;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  font-family: var(--font-family-box-title, Inter);
+  font-size: 11px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #000;
+  outline: none;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#email-modal-highlight-notes::placeholder {
+  color: rgba(0, 0, 0, 0.35);
+}
+
+/* Email content: fills remaining space */
+#email-modal-content-panel {
+  flex: 1;
+  min-width: 0;
+  max-height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
+#email-modal-content-panel .right-panel-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 10px;
+  overflow: hidden;
+}
+
+/* Colour swatches: compact strip */
+#email-modal-colors-panel {
+  flex: 0 0 auto;
+}
+
+#email-modal-colors-panel .right-panel-content {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Email body — scrollable when content is long */
+#email-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  font-family: var(--font-family-box-title, Inter);
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: #000;
+  word-break: break-word;
+  white-space: pre-wrap;
+  user-select: text;
+  outline: none;
+}
+
+#email-modal-body mark {
+  border-radius: 2px;
+  padding: 0 1px;
+  color: inherit;
+}
+
+/* Notes textarea — auto-expands, no visible border */
+#email-modal-notes {
+  width: 100%;
+  min-height: 80px;
+  resize: none;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  font-family: var(--font-family-box-title, Inter);
+  font-size: 11px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #000;
+  outline: none;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#email-modal-notes::placeholder { color: rgba(0,0,0,0.35); }
+
+/* Colour swatches in modal — always full-opacity, larger for easy clicking */
+#email-modal-colors-panel .color-swatch {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 1 !important; /* never dim — this is the highlight toolbar */
+  transition: transform 0.12s ease;
+}
+#email-modal-colors-panel .color-swatch:hover { transform: scale(1.12); }
+
+/* Collapse button — bottom-right of overlay */
+#btn-collapse-email {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  opacity: 1;
+  transition: opacity 0.15s ease;
+  line-height: 0;
+  z-index: 460;
+}
+#btn-collapse-email:hover { opacity: 0.5; }
+
+/* Subject font matches compact panel */
+.email-modal-subject {
+  font-family: var(--font-family-box-title, Inter);
+  font-weight: 400;
+  font-size: 16px;
+  color: #000;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+  word-break: break-word;
+  flex-shrink: 0;
+}
+
+.email-modal-body-container {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.email-modal-body {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+  /* ~20% larger than panel's 11-12px */
+  font-weight: 400;
+  line-height: 1.7;
+  color: #000;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.email-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+  flex-shrink: 0;
+}
+
+/* ── Kiosk attract-loop overlay ── */
+#kiosk-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  /* above #custom-cursor (9999) and #onboarding (500) */
+  background: #000;
+  display: flex;
+  cursor: none;
+}
+
+#kiosk-overlay.kiosk-hidden {
+  display: none;
+}
+
+#kiosk-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

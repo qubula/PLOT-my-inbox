@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLOT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rubik:wght@400&family=Rubik+Mono+One&family=Roboto+Mono:wght@400;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="panel.css">
+  <link rel="preload" href="/output/cluster_structure.json" as="fetch" crossorigin>
+</head>
+
+<body>
+
+  <!-- ── Onboarding overlay (always shown on load) ── -->
+  <div id="onboarding">
+
+    <!-- Step 1: Enter email -->
+    <div class="ob-step active" id="ob-step-1">
+      <div class="ob-card ob-card--landing">
+        <h1 class="ob-plot-title">PLOT</h1>
+        <p class="ob-body">PLOT transforms your email inbox into a <strong>navigable world</strong>. Unlike traditional
+          email
+          inboxes where emails are shown in a rigid tabular layout from newest to oldest, PLOT groups emails by
+          <strong>semantic themes</strong>, so you can understand what your inbox contains at a glance and explore the
+          topics and themes it has accumulated over time.
+        </p>
+        <p class="ob-input-label">Enter your email to get started</p>
+        <div class="ob-input-row">
+          <input id="ob-email-input" type="email" placeholder="your@email.com" autocomplete="email"
+            value="demo@example.com">
+          <button id="ob-email-btn" aria-label="Continue">→</button>
+        </div>
+        <p class="ob-error" id="ob-email-error"></p>
+      </div>
+    </div>
+
+    <!-- Step 2: Authenticate -->
+    <div class="ob-step" id="ob-step-2">
+      <div class="ob-card ob-card--auth">
+        <h1 class="ob-heading">Authenticate</h1>
+        <p class="ob-body">A sign-in link has been sent to <strong id="ob-email-display"></strong>. Click the link in
+          that email, or confirm below to continue.</p>
+        <button class="ob-btn-primary" id="ob-confirm-btn">Confirm</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Welcome to your PLOT -->
+    <div class="ob-step" id="ob-step-3">
+      <div class="ob-card ob-card--welcome">
+        <p class="ob-welcome-sub">Welcome to your</p>
+        <h1 class="ob-plot-title ob-plot-title--center">PLOT</h1>
+        <p class="ob-body">Your Plot consists of your whole email inbox categorised into different
+          <strong>Themes</strong>, <strong>Spaces and Clusters</strong> which allow you to quickly explore different
+          (and sometimes long forgotten) parts of your inbox. Turns out, it has quite the story to tell!
+        </p>
+        <button class="ob-btn-primary" id="ob-enter-plot-btn">Enter your Plot →</button>
+      </div>
+    </div>
+
+  </div><!-- /#onboarding -->
+
+  <!-- ── Guided tour card (shown on the live canvas after login) ── -->
+  <div id="tour-guide" aria-live="polite">
+    <p id="tour-text"></p>
+    <div class="tour-footer">
+      <div id="tour-dots"></div>
+      <div class="tour-btns">
+        <button id="tour-skip">Skip tour</button>
+        <button id="tour-next" class="tour-next-btn">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- View-level title: breadcrumb path + big location label -->
+  <div id="view-title">
+    <div id="view-breadcrumb"></div>
+    <div id="view-label">Themes</div>
+  </div>
+
+  <!-- ── Arrow icon (top-left) — hides when a left panel is active ── -->
+  <button class="icon-btn hidden" id="icon-arrow" title="Navigation">
+    <svg xmlns="http://www.w3.org/2000/svg" width="87" height="71" viewBox="0 0 87 71" fill="none">
+      <path
+        d="M57.0557 43.5654V32.0537C57.0557 25.4597 51.7102 20.1135 45.1162 20.1133C38.522 20.1133 33.1758 25.4595 33.1758 32.0537V52.6553C33.1756 55.1226 31.1754 57.123 28.708 57.123C26.2406 57.123 24.2404 55.1226 24.2402 52.6553V11.375H19.2402V52.6553C19.2404 57.884 23.4792 62.123 28.708 62.123C33.9368 62.123 38.1756 57.8841 38.1758 52.6553V32.0537C38.1758 28.221 41.2835 25.1133 45.1162 25.1133C48.9487 25.1135 52.0557 28.2211 52.0557 32.0537V43.5654H45.2838L54.5547 59.623L63.8256 43.5654H57.0557Z"
+        fill="black" />
+    </svg>
+  </button>
+
+  <!-- ── Left panels (top-left, same position as arrow icon) ── -->
+
+  <!-- Macro Panel -->
+  <div id="macro-panel" class="panel-container">
+    <div class="panel-content">
+      <span class="panel-back-btn" onclick="window._escapeBack ? window._escapeBack() : window._galaxyBack()">← All
+        themes</span>
+      <div class="panel-section">
+        <p class="panel-title">Space Theme</p>
+        <p class="panel-description">Placeholder text...</p>
+      </div>
+    </div>
+    <button class="panel-minimize-btn" title="Minimise panel">
+      <svg xmlns="http://www.w3.org/2000/svg" width="37" height="41" viewBox="0 0 37 41" fill="none">
+        <path
+          d="M5.61813 13.3252L5.61813 22.8784C5.61813 28.3506 10.0542 32.7872 15.5263 32.7874C20.9986 32.7874 25.4353 28.3507 25.4353 22.8784L25.4353 20.7195C25.4355 18.6719 27.0954 17.0118 29.143 17.0118C31.1906 17.0119 32.8505 18.6719 32.8507 20.7195L32.8507 40.0391L37 40.0391L37 20.7195C36.9998 16.3803 33.4822 12.8625 29.143 12.8625C24.8037 12.8625 21.2861 16.3803 21.286 20.7195L21.286 22.8784C21.286 26.0591 18.707 28.6381 15.5263 28.6381C12.3458 28.6379 9.76748 26.059 9.76748 22.8784L9.76748 13.3252L15.3872 13.3252L7.69362 0L0 13.3252L5.61813 13.3252Z"
+          fill="black" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Macro & Cluster Panel -->
+  <div id="macro-cluster-panel" class="panel-container">
+    <div class="panel-content">
+      <span class="panel-back-btn" onclick="window._escapeBack ? window._escapeBack() : window._galaxyBack()">← All
+        themes</span>
+      <div class="panel-section">
+        <p class="panel-title">Space Theme</p>
+        <p class="panel-description">Placeholder text...</p>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="panel-section">
+        <p class="panel-title">Cluster Theme</p>
+        <p class="panel-description">Placeholder text...</p>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="panel-chevron">
+        <svg width="16" height="10" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1L8 9L15 1" stroke="#000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+            fill="none" />
+        </svg>
+      </div>
+    </div>
+    <button class="panel-minimize-btn" title="Minimise panel">
+      <svg xmlns="http://www.w3.org/2000/svg" width="37" height="41" viewBox="0 0 37 41" fill="none">
+        <path
+          d="M5.61813 13.3252L5.61813 22.8784C5.61813 28.3506 10.0542 32.7872 15.5263 32.7874C20.9986 32.7874 25.4353 28.3507 25.4353 22.8784L25.4353 20.7195C25.4355 18.6719 27.0954 17.0118 29.143 17.0118C31.1906 17.0119 32.8505 18.6719 32.8507 20.7195L32.8507 40.0391L37 40.0391L37 20.7195C36.9998 16.3803 33.4822 12.8625 29.143 12.8625C24.8037 12.8625 21.2861 16.3803 21.286 20.7195L21.286 22.8784C21.286 26.0591 18.707 28.6381 15.5263 28.6381C12.3458 28.6379 9.76748 26.059 9.76748 22.8784L9.76748 13.3252L15.3872 13.3252L7.69362 0L0 13.3252L5.61813 13.3252Z"
+          fill="black" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Expanded Panel -->
+  <div id="expanded-panel" class="panel-container">
+    <div class="panel-content">
+      <span class="panel-back-btn" onclick="window._escapeBack ? window._escapeBack() : window._galaxyBack()">← All
+        themes</span>
+      <div class="panel-section">
+        <p class="panel-title">Space Theme</p>
+        <p class="panel-description">Placeholder text...</p>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="panel-section">
+        <p class="panel-title">Cluster Theme</p>
+        <p class="panel-description">Placeholder text...</p>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="embedded-section collapsed">
+        <div class="embedded-section-header">
+          <p class="section-title">Embedded Emails</p>
+          <button class="embedded-toggle-btn" title="Expand embedded emails" aria-expanded="false">
+            <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1.5L6 6.5L11 1.5" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="emails-grid"></div>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="threads-section">
+        <p class="section-title">Connected Email Threads</p>
+        <div class="threads-grid"></div>
+      </div>
+    </div>
+    <button class="panel-minimize-btn" title="Minimise panel">
+      <svg xmlns="http://www.w3.org/2000/svg" width="37" height="41" viewBox="0 0 37 41" fill="none">
+        <path
+          d="M5.61813 13.3252L5.61813 22.8784C5.61813 28.3506 10.0542 32.7872 15.5263 32.7874C20.9986 32.7874 25.4353 28.3507 25.4353 22.8784L25.4353 20.7195C25.4355 18.6719 27.0954 17.0118 29.143 17.0118C31.1906 17.0119 32.8505 18.6719 32.8507 20.7195L32.8507 40.0391L37 40.0391L37 20.7195C36.9998 16.3803 33.4822 12.8625 29.143 12.8625C24.8037 12.8625 21.2861 16.3803 21.286 20.7195L21.286 22.8784C21.286 26.0591 18.707 28.6381 15.5263 28.6381C12.3458 28.6379 9.76748 26.059 9.76748 22.8784L9.76748 13.3252L15.3872 13.3252L7.69362 0L0 13.3252L5.61813 13.3252Z"
+          fill="black" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- ── Right panel stack (Email info + Organise + Sort) ── -->
+  <div id="right-panel-stack">
+
+    <!-- Email detail panel — shown only when an email node is selected -->
+    <div id="email-detail-panel" class="right-panel">
+      <div class="right-panel-content">
+        <p class="email-subject">Subject Line</p>
+        <div class="email-detail-meta">
+          <p class="email-meta-item"><span class="meta-label">Date:</span> <span class="email-date">Date</span></p>
+          <p class="email-meta-item"><span class="meta-label">Size:</span> <span class="email-size">Size</span></p>
+        </div>
+        <div class="email-body-container">
+          <p class="email-body">Email body content...</p>
+        </div>
+        <div class="email-panel-actions">
+          <button id="btn-expand-email" title="Expand email">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="15.75" viewBox="0 0 30 24" fill="none">
+              <path
+                d="M29.5 23.2305H0V0H29.5V23.2305ZM24.6426 3.10156L21.127 3.10547V4.86133H23.3945L15.5195 12.7373L16.7617 13.9795L24.6426 6.09766V8.37207H26.3984V3.09961L24.6426 3.10156Z"
+                fill="black" />
+            </svg>
+          </button>
+        </div>
+
+      </div><!-- /right-panel-content -->
+    </div><!-- /email-detail-panel -->
+
+    <!-- Organise panel — always visible in cluster view -->
+    <div id="organise-panel" class="right-panel">
+      <div class="right-panel-content">
+        <p class="right-panel-title">Organise</p>
+        <div class="rp-row">
+          <button class="org-btn" id="btn-archive" title="Archive selected email(s)" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="46" height="55" viewBox="0 0 46 55" fill="none">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M0.200002 0C0.0895447 0 0 0.0895431 0 0.2V53.9043C0 54.0147 0.0895431 54.1043 0.2 54.1043H45.0129C45.1233 54.1043 45.2129 54.0147 45.2129 53.9043V13.4947H31.9182C31.8078 13.4947 31.7182 13.4051 31.7182 13.2947V0H0.200002Z" fill="black"/>
+              <path d="M45.2129 13.4947H31.9182C31.8078 13.4947 31.7182 13.4051 31.7182 13.2947V0L45.2129 13.4947Z" fill="black"/>
+              <path d="M45.212 13.4952H32.6015C32.1129 13.4952 31.7168 13.0991 31.7168 12.6105V0L45.212 13.4952Z" fill="white"/>
+              <rect x="12.4844" y="41.373" width="20.2429" height="12.7321" fill="white"/>
+            </svg>
+            <span>Archive</span>
+          </button>
+          <button class="org-btn" id="btn-group" title="Group selected emails into a new thread" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 45 45" fill="none">
+              <circle cx="8.0638" cy="15.0716" r="8.0638" fill="black" />
+              <circle cx="28.8001" cy="36.1361" r="8.0638" fill="black" />
+              <path d="M44.3832 39.6136C22.5052 39.6136 4.76953 21.878 4.76953 0" stroke="black"
+                stroke-width="0.399059" />
+              <path
+                d="M27.6975 13.9709V8.57422H29.9034V13.9709H35.3001V16.1769H29.9034V21.5736H27.6975V16.1769H22.3008V13.9709H27.6975Z"
+                fill="black" />
+            </svg>
+            <span>Group</span>
+          </button>
+          <button class="org-btn" id="btn-split" title="Split selected emails into new thread" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="55" height="53" viewBox="0 0 55 53" fill="none">
+              <circle cx="21.0157" cy="13.9747" r="7.4766" fill="black" />
+              <circle cx="40.2422" cy="33.5039" r="7.4766" fill="black" />
+              <path d="M54.69 36.729C34.4051 36.729 17.9609 20.2849 17.9609 0" stroke="black" stroke-width="0.37" />
+              <line x1="20.8868" y1="32.4454" x2="37.3026" y2="16.0295" stroke="black" stroke-width="0.37"
+                stroke-dasharray="1.48 1.48" />
+              <path
+                d="M9.99454 36.6054C10.5858 36.6386 11.138 36.7353 11.5844 36.9218C12.018 37.1032 12.488 37.4311 12.6381 38.0029C12.7882 38.5749 12.5402 39.0919 12.2514 39.4629C11.9542 39.8446 11.5206 40.1993 11.0219 40.5185C10.0165 41.162 8.59712 41.7571 7.00235 42.1758C5.40772 42.5943 3.87963 42.7728 2.6879 42.706C2.09667 42.6728 1.54444 42.5771 1.09806 42.3906C0.664382 42.2093 0.195438 41.8804 0.0453232 41.3086C-0.104803 40.7366 0.142282 40.2195 0.431065 39.8486C0.728332 39.4668 1.16275 39.1122 1.66153 38.7929C2.66688 38.1495 4.08554 37.5543 5.68009 37.1357C7.27474 36.7172 8.8028 36.5387 9.99454 36.6054Z"
+                fill="black" />
+              <path
+                d="M13.4639 40.7967C13.8597 40.5432 14.3974 40.3439 14.9531 40.5458C15.5088 40.7477 15.7928 41.2458 15.9336 41.6942C16.0785 42.1558 16.1237 42.7147 16.1026 43.3065C16.0599 44.4993 15.7415 46.0041 15.1787 47.5536C14.6158 49.1033 13.894 50.4619 13.1612 51.4042C12.7975 51.8716 12.4045 52.271 11.9971 52.5321C11.6013 52.7857 11.0637 52.985 10.5078 52.7831C9.95208 52.5812 9.66816 52.0831 9.52736 51.6346C9.38254 51.1731 9.33733 50.615 9.35842 50.0233C9.40106 48.8305 9.71845 47.3249 10.2813 45.7753C10.8442 44.2255 11.5669 42.8669 12.2998 41.9247C12.6635 41.4573 13.0565 41.0578 13.4639 40.7967Z"
+                fill="black" />
+              <path
+                d="M19.435 25.1276L18.702 24.3689L14.9067 37.0402L11.35 37.5458L11.7318 39.4357L14.3475 38.9073L13.6216 41.3307L15.4685 41.8839L16.2648 38.52L29.2257 35.9018L28.5333 35.1033L16.6746 36.7889L19.435 25.1276Z"
+                fill="black" />
+            </svg>
+            <span>Split</span>
+          </button>
+        </div>
+        <!-- Email colour swatches -->
+        <div class="color-swatch-row">
+          <button class="color-swatch" data-color="#3797B8" style="background:#3797B8" title="Blue" disabled></button>
+          <button class="color-swatch" data-color="#CD3D5C" style="background:#CD3D5C" title="Rose" disabled></button>
+          <button class="color-swatch" data-color="#E6D539" style="background:#E6D539" title="Yellow" disabled></button>
+          <button class="color-swatch" data-color="#FF9FD4" style="background:#FF9FD4" title="Pink" disabled></button>
+          <button class="color-swatch" data-color="#E8A26B" style="background:#E8A26B" title="Orange" disabled></button>
+          <button class="color-swatch" data-color="#FF4A00" style="background:#FF4A00" title="Red-orange" disabled></button>
+          <button class="color-swatch" data-color="#62E599" style="background:#62E599" title="Green"
+            disabled></button>
+          <button class="color-swatch color-swatch--custom" id="btn-color-custom" title="Custom colour" disabled>
+            <input type="color" id="color-custom-input" tabindex="-1" value="#ff0000">
+          </button>
+        </div>
+
+        <div class="panel-divider" style="margin:8px 0;"></div>
+        <p class="rp-section-label">Delete</p>
+        <div class="rp-row rp-row--compact">
+          <button class="org-btn org-btn--sm" id="btn-delete-email" title="Delete this email">
+            <svg xmlns="http://www.w3.org/2000/svg" width="47" height="52" viewBox="0 0 47 52" fill="none">
+              <path d="M1.49219 0.150391L6.53516 50.3516H39.6445L44.6875 0.150391" stroke="black" stroke-width="3" />
+              <circle cx="23.0889" cy="34.6084" r="10.2236" fill="black" />
+            </svg>
+            <span>Email</span>
+          </button>
+          <button class="org-btn org-btn--sm" id="btn-delete-thread" title="Delete whole thread">
+            <svg xmlns="http://www.w3.org/2000/svg" width="47" height="52" viewBox="0 0 47 52" fill="none">
+              <path d="M1.49219 0.150391L6.53516 50.3516H39.6445L44.6875 0.150391" stroke="black" stroke-width="3" />
+              <circle cx="19.5107" cy="24.7119" r="10.4658" fill="black" />
+              <circle cx="19.5121" cy="8.65855" r="3.73277" fill="black" />
+              <circle cx="29.9808" cy="12.3949" r="3.73277" fill="black" />
+              <circle cx="35.014" cy="22.264" r="3.73277" fill="black" />
+            </svg>
+            <span>Thread</span>
+          </button>
+          <button class="org-btn org-btn--sm" id="btn-delete-ring" title="Delete selected ring" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="47" height="52" viewBox="0 0 47 52" fill="none">
+              <path d="M1.49219 0.150391L6.53516 50.3516H39.6445L44.6875 0.150391" stroke="black" stroke-width="3" />
+              <circle cx="23.0902" cy="6.88119" r="2.95541" fill="black" />
+              <circle cx="30.9105" cy="9.81479" r="2.95541" fill="black" />
+              <circle cx="35.9261" cy="16.3578" r="2.95541" fill="black" />
+              <circle cx="12.3871" cy="28.2953" r="2.95541" fill="black" />
+              <circle cx="18.2972" cy="33.139" r="2.95541" fill="black" />
+              <circle cx="23.0908" cy="20.5186" r="13.4092" stroke="black" stroke-width="0.5" />
+            </svg>
+            <span>Ring</span>
+          </button>
+          <button class="org-btn org-btn--sm" id="btn-delete-cluster" title="Delete whole cluster">
+            <svg xmlns="http://www.w3.org/2000/svg" width="47" height="52" viewBox="0 0 47 52" fill="none">
+              <path d="M1.49219 0.150391L6.53516 50.3516H39.6445L44.6875 0.150391" stroke="black" stroke-width="3" />
+              <path
+                d="M25.0124 8.25704C24.7947 6.92194 24.2426 5.62233 23.3411 4.48806C20.5278 0.948204 15.3775 0.35923 11.8377 3.17255C8.29781 5.98587 7.70884 11.1361 10.5222 14.676C10.9803 15.2524 11.5003 15.7506 12.0653 16.1686C8.40061 19.0811 7.78834 24.415 10.7009 28.0797C11.8434 29.5173 13.3582 30.4848 14.9987 30.954C14.8059 31.083 14.6168 31.2209 14.4319 31.3678C10.7672 34.2804 10.1575 39.6123 13.07 43.277C15.9826 46.9417 21.3145 47.5515 24.9792 44.6389C27.2046 42.8702 28.3035 40.2093 28.1711 37.5714C30.2966 37.8527 32.5291 37.3039 34.3401 35.8646C37.8799 33.0512 38.4689 27.901 35.6556 24.3611C34.9942 23.5289 34.2037 22.8599 33.3353 22.3597C33.6816 22.1595 34.0175 21.9314 34.3401 21.6751C37.8799 18.8618 38.4689 13.7115 35.6556 10.1717C33.0628 6.90929 28.4851 6.1533 25.0124 8.25704Z"
+                fill="black" />
+            </svg>
+            <span>Cluster</span>
+          </button>
+          <div style="flex:1;"></div>
+          <button class="org-btn org-btn--sm" id="btn-undo" title="Undo last action" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="39" height="35" viewBox="0 0 39 35" fill="none">
+              <path
+                d="M17.2559 0.000216683L-1.07426e-06 9.96289L17.2559 19.9256L17.2559 12.4629L24.7627 12.4629C29.4781 12.4629 33.3008 16.2855 33.3008 21.001C33.3008 25.7164 29.4781 29.5391 24.7627 29.5391L0.755858 29.5391L0.755858 34.5391L24.7627 34.5391C32.2396 34.5391 38.3008 28.4778 38.3008 21.001C38.3008 13.5241 32.2396 7.46289 24.7627 7.46289L17.2559 7.46289L17.2559 0.000216683Z"
+                fill="black" />
+            </svg>
+            <span>Undo</span>
+          </button>
+          <button class="org-btn org-btn--sm" id="btn-undo-all" title="Undo all changes to this cluster" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="39" height="35" viewBox="0 0 39 35" fill="none">
+              <path d="M17.2559 0L0 9.96267L17.2559 19.9254V12.4627H24.7627C29.4781 12.4627 33.3008 16.2853 33.3008 21.0008C33.3008 25.7162 29.4781 29.5388 24.7627 29.5388H0.755859V34.5388H24.7627C32.2396 34.5388 38.3008 28.4776 38.3008 21.0008C38.3008 13.5239 32.2396 7.46267 24.7627 7.46267L17.2559 7.46267V0Z" fill="black"/>
+              <path d="M0.904298 27.4888H3.14506L4.10342 24.6312H8.46021L9.42033 27.4888H11.6611L7.57566 15.9002H4.98407L0.904298 27.4888ZM7.89364 22.945H4.66895L6.2346 18.2767H6.32513L7.89364 22.945Z" fill="black"/>
+            </svg>
+            <span>Undo All</span>
+          </button>
+        </div>
+      </div>
+    </div><!-- /organise-panel -->
+
+    <!-- Sort panel — always visible in cluster view -->
+    <div id="sort-panel" class="right-panel">
+      <div class="right-panel-content">
+        <p class="right-panel-title">Sort</p>
+        <div class="rp-row">
+          <button class="sort-filter-btn" id="btn-sort-week" title="Sort rings by week">
+            <svg xmlns="http://www.w3.org/2000/svg" width="41" height="51" viewBox="0 0 41 51" fill="none">
+              <path
+                d="M40.6797 0V5.19336L25.5352 31.4238V50.9297H15.1445V31.4238L0 5.19336V0H40.6797ZM11.2227 5.72656L15.0908 19.4326H17.54L20.291 9.81543H20.3975L23.1416 19.4326H25.5908L29.459 5.72656H26.7891L24.3193 15.8057H24.1992L21.5557 5.72656H19.126L16.4893 15.7988H16.3623L13.8926 5.72656H11.2227Z"
+                fill="black" />
+            </svg>
+            <span>Week</span>
+          </button>
+          <button class="sort-filter-btn" id="btn-sort-month" title="Sort rings by month">
+            <svg xmlns="http://www.w3.org/2000/svg" width="41" height="51" viewBox="0 0 41 51" fill="none">
+              <path
+                d="M40.6807 0V5.19336L25.5361 31.4248V50.9297H15.1445V31.4248L0 5.19336V0H40.6807ZM13.1523 5.72852V19.4355H15.5352V9.99805H15.6621L19.4502 19.3945H21.2305L25.0186 10.0186H25.1455V19.4355H27.5283V5.72852H24.4893L20.4199 15.6602H20.2598L16.1904 5.72852H13.1523Z"
+                fill="black" />
+            </svg>
+            <span>Month</span>
+          </button>
+          <button class="sort-filter-btn" id="btn-sort-year" title="Sort rings by year">
+            <svg xmlns="http://www.w3.org/2000/svg" width="41" height="51" viewBox="0 0 41 51" fill="none">
+              <path
+                d="M40.6797 0V5.19336L25.5352 31.4248V50.9297H15.1445V31.4248L0 5.19336V0H40.6797ZM13.8262 5.72852L19.0439 15.292V20.9834H21.6348V15.292L26.8525 5.72852H23.918L20.4092 12.4766H20.2695L16.7607 5.72852H13.8262Z"
+                fill="black" />
+            </svg>
+            <span>Year</span>
+          </button>
+        </div>
+      </div>
+    </div><!-- /sort-panel -->
+
+  </div><!-- /right-panel-stack -->
+
+  <!-- ── Right icon group (top-right) ── -->
+  <div id="icon-group-right">
+
+    <!-- Info icon → stats panel -->
+    <div class="icon-slot" id="icon-slot-info">
+      <button class="icon-btn" id="icon-info" title="Info">
+        <svg xmlns="http://www.w3.org/2000/svg" width="87" height="71" viewBox="0 0 87 71" fill="none">
+          <rect x="12.5508" y="9.35156" width="61.8972" height="10.8239" rx="0.453239" fill="black" />
+          <rect x="12.5508" y="23.1758" width="61.8972" height="10.8239" rx="0.453239" fill="black" />
+          <rect x="12.5508" y="37" width="61.8972" height="10.8239" rx="0.453239" fill="black" />
+          <rect x="12.5508" y="50.8242" width="61.8972" height="10.8239" rx="0.453239" fill="black" />
+        </svg>
+      </button>
+      <div class="icon-panel" id="panel-info-stats">
+        <div class="stat-row">
+          <span class="stat-label">Emails</span>
+          <span class="stat-value" id="emails-count">—</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-row">
+          <span class="stat-label">Clusters</span>
+          <span class="stat-value" id="clusters-count">—</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-row">
+          <span class="stat-label">Spaces</span>
+          <span class="stat-value" id="macro-clusters-count">—</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-row">
+          <span class="stat-label">Themes</span>
+          <span class="stat-value" id="galaxies-count">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data icon → data size panel -->
+    <div class="icon-slot" id="icon-slot-data">
+      <button class="icon-btn" id="icon-data" title="Data">
+        <svg xmlns="http://www.w3.org/2000/svg" width="87" height="71" viewBox="0 0 87 71" fill="none">
+          <path
+            d="M22.4823 26.689C22.4823 28.3924 22.7754 30.0361 23.3198 31.5836C16.698 33.7653 12.0078 39.1936 12.0078 45.5447C12.0078 53.8209 19.9723 60.5301 29.7969 60.5301C33.8158 60.5301 37.5234 59.4074 40.5019 57.5141C44.1573 61.1718 49.2173 63.4358 54.8081 63.4358C65.9563 63.4358 74.9937 54.434 74.9937 43.3296C74.9937 34.1333 68.7953 26.3791 60.3328 23.9858C58.8545 16.0813 51.0001 10.0488 41.5326 10.0488C31.0114 10.0488 22.4823 17.4989 22.4823 26.689Z"
+            fill="black" />
+        </svg>
+      </button>
+      <div class="icon-panel" id="panel-data-size">
+        <div class="stat-row">
+          <span class="stat-label">Data</span>
+          <span class="stat-value" id="data-size-value">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Facts icon → quick facts panel -->
+    <div class="icon-slot" id="icon-slot-facts">
+      <button class="icon-btn" id="icon-facts" title="Quick Facts">
+        <svg xmlns="http://www.w3.org/2000/svg" width="87" height="71" viewBox="0 0 87 71" fill="none">
+          <path
+            d="M56.542 9.45703C56.665 9.45715 56.783 9.5059 56.8701 9.59277L65.1279 17.8506C65.2151 17.9378 65.2637 18.0564 65.2637 18.1797V61.0801C65.2635 61.3368 65.0556 61.5449 64.7988 61.5449H22.2012C21.9444 61.5449 21.7365 61.3368 21.7363 61.0801V9.92188C21.7364 9.66515 21.9444 9.45706 22.2012 9.45703H56.542ZM50.2764 20.7734C50.4753 20.2999 49.873 19.9009 49.5146 20.2686L35.6387 34.5264C35.4105 34.7612 35.4901 35.1524 35.792 35.2793L42.4951 38.0947C42.7317 38.1941 42.8432 38.4664 42.7441 38.7031L36.8857 52.6523C36.6814 53.139 37.3166 53.5359 37.6641 53.1387L51.748 37.0283C51.9567 36.7895 51.8696 36.4158 51.5771 36.293L45.3584 33.6807C45.1217 33.5812 45.0101 33.309 45.1094 33.0723L50.2764 20.7734Z"
+            fill="black" />
+        </svg>
+      </button>
+      <div class="icon-panel" id="panel-facts">
+        <p class="facts-heading">Quick Facts</p>
+        <div class="fact-card">
+          <span class="fact-stat">47%</span>
+          <span class="fact-desc">of all emails live in just 2 spaces</span>
+        </div>
+        <div class="fact-card">
+          <span class="fact-stat">1 in 3</span>
+          <span class="fact-desc">emails is part of a thread</span>
+        </div>
+        <div class="fact-card">
+          <span class="fact-stat">~1 yr</span>
+          <span class="fact-desc">of email history in this inbox</span>
+        </div>
+        <div class="fact-card">
+          <span class="fact-stat">top 3</span>
+          <span class="fact-desc">clusters hold over half the inbox</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Bottom-left icon group ── -->
+  <div id="icon-group-bottom-left">
+
+    <div id="icon-help" title="Help">
+      <svg xmlns="http://www.w3.org/2000/svg" width="34" height="60" viewBox="0 0 34 60" fill="none">
+        <path
+          d="M11.6518 42.4216V42.0823C11.6895 38.4811 12.0666 35.6153 12.7831 33.4848C13.4995 31.3543 14.5176 29.6292 15.8374 28.3094C17.1572 26.9896 18.7409 25.7735 20.5886 24.6611C21.701 23.9824 22.7003 23.1811 23.5864 22.2572C24.4726 21.3145 25.1702 20.2304 25.6792 19.0049C26.2072 17.7794 26.4711 16.4219 26.4711 14.9324C26.4711 13.0847 26.0375 11.4821 25.1702 10.1246C24.3029 8.76714 23.1434 7.72074 21.6916 6.98543C20.2398 6.25012 18.6278 5.88247 16.8555 5.88247C15.3095 5.88247 13.82 6.20299 12.3871 6.84403C10.9542 7.48507 9.75698 8.49376 8.79542 9.87011C7.83387 11.2465 7.27767 13.047 7.12684 15.2718H0C0.150833 12.0666 0.980412 9.32334 2.48874 7.042C4.01592 4.76065 6.02387 3.01665 8.51261 1.80999C11.0202 0.60333 13.8012 0 16.8555 0C20.1739 0 23.0585 0.659892 25.5096 1.97968C27.9794 3.29946 29.8837 5.10945 31.2223 7.40965C32.5798 9.70984 33.2586 12.3306 33.2586 15.2718C33.2586 17.3457 32.9381 19.2217 32.297 20.8997C31.6748 22.5777 30.7698 24.0766 29.582 25.3964C28.4131 26.7162 26.999 27.8852 25.3399 28.9033C23.6807 29.9403 22.3515 31.0338 21.3522 32.1839C20.353 33.3151 19.6271 34.6632 19.1746 36.2281C18.7221 37.793 18.477 39.7444 18.4393 42.0823V42.4216H11.6518ZM15.2718 59.1641C13.8766 59.1641 12.6794 58.6644 11.6801 57.6652C10.6808 56.6659 10.1812 55.4687 10.1812 54.0735C10.1812 52.6783 10.6808 51.481 11.6801 50.4818C12.6794 49.4825 13.8766 48.9829 15.2718 48.9829C16.667 48.9829 17.8642 49.4825 18.8635 50.4818C19.8628 51.481 20.3624 52.6783 20.3624 54.0735C20.3624 54.9973 20.1267 55.8457 19.6554 56.6188C19.2029 57.3918 18.5901 58.014 17.8171 58.4853C17.0629 58.9378 16.2145 59.1641 15.2718 59.1641Z"
+          fill="black" />
+      </svg>
+    </div>
+
+    <!-- Legend icon → legend panel (hover/pin) -->
+    <div class="icon-slot" id="icon-slot-legend">
+      <button class="icon-btn" id="legend-minimized" aria-label="Open legend">
+        <svg xmlns="http://www.w3.org/2000/svg" width="87" height="71" viewBox="0 0 87 71" fill="none">
+          <path
+            d="M69.2871 8.80859C69.7854 8.80859 70.1895 9.21264 70.1895 9.71094V61.2871C70.1895 61.7854 69.7854 62.1895 69.2871 62.1895H17.7109C17.2126 62.1895 16.8086 61.7854 16.8086 61.2871V9.71094C16.8086 9.21264 17.2126 8.80859 17.7109 8.80859H69.2871ZM27.9922 46.584C24.8598 46.584 22.3203 49.1235 22.3203 52.2559C22.3203 55.3882 24.8598 57.9277 27.9922 57.9277C31.1245 57.9276 33.6641 55.3882 33.6641 52.2559C33.6641 49.1236 31.1245 46.5841 27.9922 46.584ZM27.9922 29.8271C24.8598 29.8271 22.3203 32.3666 22.3203 35.499C22.3203 38.6314 24.8598 41.1709 27.9922 41.1709C31.1245 41.1708 33.6641 38.6313 33.6641 35.499C33.6641 32.3667 31.1245 29.8273 27.9922 29.8271ZM27.9922 13.0703C24.8598 13.0703 22.3203 15.6098 22.3203 18.7422C22.3203 21.8746 24.8598 24.4141 27.9922 24.4141C31.1245 24.4139 33.6641 21.8745 33.6641 18.7422C33.6641 15.6099 31.1245 13.0704 27.9922 13.0703Z"
+            fill="black" />
+        </svg>
+      </button>
+      <div class="icon-panel icon-panel--up" id="panel-legend">
+        <h2 class="legend-heading">Legend</h2>
+        <p class="legend-subtitle">Each level has its own background colour and visual language.</p>
+
+        <!-- Level background previews -->
+        <div class="legend-levels">
+          <div class="legend-level-item">
+            <canvas id="legend-themes-preview" class="legend-preview-canvas"></canvas>
+            <div class="legend-level-label">Themes <span class="legend-level-sub">— broad topic clusters</span></div>
+          </div>
+          <div class="legend-level-item">
+            <canvas id="legend-spaces-preview" class="legend-preview-canvas"></canvas>
+            <div class="legend-level-label">Spaces <span class="legend-level-sub">— sub-topics within a theme</span>
+            </div>
+          </div>
+          <div class="legend-level-item">
+            <canvas id="legend-clusters-preview" class="legend-preview-canvas"></canvas>
+            <div class="legend-level-label">Clusters <span class="legend-level-sub">— groups of related emails</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-divider"></div>
+
+        <!-- Digital decomposition -->
+        <p class="legend-sub-heading">Digital decomposition</p>
+        <p class="legend-subtitle">The older an item, the more its form has decayed — shrinking away from its original
+          shape.</p>
+        <div class="legend-section">
+          <div class="legend-row">
+            <div class="legend-item">
+              <canvas id="legend-email-recent" class="legend-canvas"></canvas>
+              <div class="legend-caption">Recent</div>
+            </div>
+            <div class="legend-arrow">→</div>
+            <div class="legend-item">
+              <canvas id="legend-email-old" class="legend-canvas"></canvas>
+              <div class="legend-caption">Old</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Palm tree — grows as emails are deleted (to the right of legend) -->
+    <div id="palm-tree-container">
+      <div id="palm-tree" title="Plant a tree — delete your old emails"></div>
+
+      <!-- Water droplets — animate over the tree on every deletion -->
+      <svg id="carbon-droplets" xmlns="http://www.w3.org/2000/svg" width="47" height="35" viewBox="0 0 47 35" fill="none" aria-hidden="true">
+        <path d="M11.5886 24.862C11.5886 29.0897 8.99438 30.6221 5.79428 30.6221C2.59419 30.6221 0 29.0897 0 24.862C0 20.6344 5.79428 15.3125 5.79428 15.3125C5.79428 15.3125 11.5886 20.6344 11.5886 24.862Z" fill="#A4C6E0"/>
+        <path d="M46.5886 28.7292C46.5886 32.9569 43.9944 34.4893 40.7943 34.4893C37.5942 34.4893 35 32.9569 35 28.7292C35 24.5016 40.7943 19.1797 40.7943 19.1797C40.7943 19.1797 46.5886 24.5016 46.5886 28.7292Z" fill="#A4C6E0"/>
+        <path d="M39.8268 11.3581C39.8268 15.5858 37.2327 17.1182 34.0326 17.1182C30.8325 17.1182 28.2383 15.5858 28.2383 11.3581C28.2383 7.13048 34.0326 1.80859 34.0326 1.80859C34.0326 1.80859 39.8268 7.13048 39.8268 11.3581Z" fill="#A4C6E0"/>
+        <path d="M21.7253 9.54953C21.7253 13.7772 19.1311 15.3096 15.931 15.3096C12.7309 15.3096 10.1367 13.7772 10.1367 9.54953C10.1367 5.32189 15.931 0 15.931 0C15.931 0 21.7253 5.32189 21.7253 9.54953Z" fill="#A4C6E0"/>
+        <path d="M29.5495 26.6706C29.5495 30.8983 26.9553 32.4307 23.7552 32.4307C20.5551 32.4307 17.9609 30.8983 17.9609 26.6706C17.9609 22.443 23.7552 17.1211 23.7552 17.1211C23.7552 17.1211 29.5495 22.443 29.5495 26.6706Z" fill="#A4C6E0"/>
+      </svg>
+
+      <!-- Carbon footprint panel — appears on hover, same layout as left panels -->
+      <div id="carbon-panel">
+        <div class="panel-content">
+          <div class="panel-section">
+            <p class="panel-title">Your inbox &amp; your tree</p>
+            <p id="carbon-trees-stat" class="panel-description"></p>
+            <p id="carbon-water-stat" class="panel-description"></p>
+          </div>
+          <div class="panel-divider"></div>
+          <div class="panel-section">
+            <p class="panel-title">The bigger picture</p>
+            <p id="carbon-global-stat" class="panel-description"></p>
+          </div>
+          <div class="panel-divider"></div>
+          <div class="panel-section">
+            <p class="panel-title">What you've freed</p>
+            <p id="carbon-savings-stat" class="panel-description"></p>
+          </div>
+          <p class="panel-description carbon-disclaimer">* Estimates. Actual emissions vary by data centre and region.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── First-time navigation hint — auto-shows near the Help icon ── -->
+  <div id="nav-hint" role="status">
+    <button id="nav-hint-close" aria-label="Dismiss hint">&times;</button>
+    <p>Use your mouse or <strong>arrow keys</strong> to move between clusters.</p>
+    <p>Press <strong>Esc</strong> to leave a cluster.</p>
+  </div>
+
+  <!-- ── Bottom-right Chat slot (icon morphs into panel) ── -->
+  <div id="icon-slot-chat" class="icon-slot">
+    <button class="icon-btn" id="chat-btn" title="Inbox Assistant">
+      <svg xmlns="http://www.w3.org/2000/svg" width="87" height="71" viewBox="0 0 87 71" fill="none">
+        <path
+          d="M46.3918 13.793C62.0919 13.7932 74.8195 23.1267 74.8195 34.6396C74.8192 46.1524 62.0917 55.4852 46.3918 55.4854C42.9715 55.4854 40.0478 55.2986 37.3312 55.125C33.3123 54.8682 29.745 54.6405 25.6877 55.0889C21.1715 55.5879 15.8736 56.5825 12.8244 57.1943C12.2659 57.3062 11.9369 56.5534 12.3986 56.2197C13.8352 55.1818 15.7874 53.7602 17.9631 52.1523C20.8148 50.0449 20.5192 46.7506 19.4787 42.8271C19.1066 41.9398 18.549 38.9742 18.34 38.04C18.0925 36.9336 17.9631 35.7975 17.9631 34.6396C17.9631 23.1266 30.6915 13.793 46.3918 13.793ZM38.2482 40.8438C37.4169 40.8438 36.7425 41.5174 36.7424 42.3486C36.7424 43.18 37.4168 43.8545 38.2482 43.8545C39.0795 43.8544 39.7531 43.18 39.7531 42.3486C39.7529 41.5174 39.0794 40.8439 38.2482 40.8438ZM45.0744 40.8438C44.2431 40.8438 43.5687 41.5174 43.5685 42.3486C43.5685 43.18 44.243 43.8545 45.0744 43.8545C45.9057 43.8544 46.5793 43.18 46.5793 42.3486C46.5791 41.5175 45.9056 40.8439 45.0744 40.8438ZM51.8986 40.8438C51.0673 40.8438 50.3929 41.5174 50.3928 42.3486C50.3928 43.18 51.0672 43.8545 51.8986 43.8545C52.73 43.8544 53.4035 43.18 53.4035 42.3486C53.4033 41.5174 52.7299 40.8438 51.8986 40.8438Z"
+          fill="black" />
+      </svg>
+    </button>
+    <!-- Chat panel lives inside the slot — revealed when slot morphs open -->
+    <div class="icon-panel" id="chat-panel">
+      <div id="chat-header">
+        <span>Inbox Assistant</span>
+        <span id="chat-model">Gemma</span>
+      </div>
+      <div class="chat-rule"></div>
+      <div id="chat-messages"></div>
+      <!-- bottom rule + input wrapped so they're flush — vertical separator meets the rule -->
+      <div id="chat-input-section">
+        <div class="chat-rule"></div>
+        <div id="chat-input-row">
+          <input id="chat-input" type="text" placeholder="Ask about your emails…" autocomplete="off">
+          <button id="chat-send">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom morphing cursor (must be in DOM before cursor.js runs) -->
+  <div id="custom-cursor">
+    <span id="cursor-label"></span>
+  </div>
+
+  <!-- Text caret — shown instead of dot when hovering readable text in panels -->
+  <div id="cursor-text"></div>
+
+  <!-- Custom pointer cursor — shown instead of gray dot when over clickable elements -->
+  <div id="cursor-ptr">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="26" viewBox="0 0 20 26" fill="none">
+      <path
+        d="M5.94375 6.83868L6.17847 1.58413C6.21805 0.698045 6.94788 -1.00179e-05 7.83484 -0.000133568C8.68254 -0.000251649 9.39385 0.638987 9.48394 1.48189L10.0664 6.93127C10.1502 7.71576 10.6874 8.37764 11.4379 8.6211L17.9576 10.7363C18.7821 11.0037 19.3405 11.7719 19.3405 12.6387L19.3405 21.8085C19.3405 22.6564 18.8057 23.4122 18.0061 23.6944L13.3077 25.3526C12.877 25.5046 12.4072 25.5046 11.9765 25.3526L6.51094 23.4237C6.141 23.2931 5.81762 23.0566 5.58106 22.7437L0.405121 15.8961C-0.260881 15.015 -0.0865861 13.7609 0.794434 13.0948L2.96312 11.4551C3.37366 11.1447 3.9581 11.2259 4.26849 11.6365L4.33401 11.7231C4.85194 12.4082 5.94375 12.0419 5.94375 11.1831L5.94375 6.83868Z"
+        fill="#818181" />
+    </svg>
+  </div>
+
+  <!-- ── Expanded email modal — 3-column focused view ── -->
+  <div id="email-expanded-modal">
+    <div id="email-modal-grid">
+
+      <!-- Left: Notes + Highlight Notes column -->
+      <div id="email-modal-left-col">
+        <div class="email-modal-col right-panel" id="email-modal-notes-panel">
+          <div class="right-panel-content">
+            <p class="right-panel-title">Notes</p>
+            <textarea id="email-modal-notes" placeholder="Add a note…"></textarea>
+          </div>
+        </div>
+        <!-- Highlight Notes — appears when text is selected or a highlight is clicked -->
+        <div class="email-modal-col right-panel" id="email-modal-highlight-notes-panel">
+          <div class="right-panel-content">
+            <p class="right-panel-title">Highlight Notes</p>
+            <textarea id="email-modal-highlight-notes" placeholder="Add a note for this highlight…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Centre: Email content -->
+      <div class="email-modal-col right-panel" id="email-modal-content-panel">
+        <div class="right-panel-content">
+          <p class="email-modal-subject email-subject"></p>
+          <div class="email-detail-meta">
+            <p class="email-meta-item"><span class="meta-label">Date:</span> <span class="email-modal-date"></span></p>
+            <p class="email-meta-item"><span class="meta-label">Size:</span> <span class="email-modal-size"></span></p>
+          </div>
+          <div id="email-modal-body" contenteditable="true" spellcheck="false"></div>
+        </div>
+      </div>
+
+      <!-- Right: Colour highlight swatches -->
+      <div class="email-modal-col right-panel" id="email-modal-colors-panel">
+        <div class="right-panel-content">
+          <button class="color-swatch" data-color="#F9FF8D" style="background:#F9FF8D"
+            title="Yellow highlight"></button>
+          <button class="color-swatch" data-color="#8DFFFD" style="background:#8DFFFD" title="Cyan highlight"></button>
+          <button class="color-swatch" data-color="#FF8DA7" style="background:#FF8DA7" title="Pink highlight"></button>
+        </div>
+      </div>
+
+    </div><!-- /email-modal-grid -->
+
+    <!-- Collapse button — bottom-right corner -->
+    <button id="btn-collapse-email" title="Minimise">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="24" viewBox="0 0 30 24" fill="none">
+        <path fill-rule="evenodd" clip-rule="evenodd"
+          d="M30 0H0V23.6242H30V0ZM17.8547 10.9978L25.8695 2.98301L27.1325 4.24597L19.1234 12.255H21.4299V14.0411L17.8547 14.0448L16.0686 14.0466V12.255V8.68528H17.8547V10.9978Z"
+          fill="white" />
+      </svg>
+    </button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <script src="bundle.js"></script>
+  <script>
+    // Prefetch all macro sub-cluster data immediately after page load so
+    // clicking into a space feels instant (data already in browser cache).
+    window.addEventListener('load', function () {
+      [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14].forEach(function (id) {
+        fetch('/output/macro_subs/' + id + '.json').catch(function () {});
+      });
+    });
+  </script>
+
+</body>
+
+</html>
