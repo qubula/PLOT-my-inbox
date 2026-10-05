@@ -23,7 +23,7 @@ A proof of concept that groups email into clusters of increasing specificity, fr
 ![Netlify](https://img.shields.io/badge/deployed%20on-Netlify-000000?style=flat-square&logo=netlify&logoColor=white)
 [![License](https://img.shields.io/badge/license-free%20for%20non--commercial%20use-000000?style=flat-square)](#license)
 
-[**Try it live**](https://plot-demo.netlify.app/) · [Watch the demo](https://www.youtube.com/watch?v=20Sa4PoC53U) · [How it works](#how-it-works) · [Run it locally](#run-it-locally)
+[**Try it live**](https://plot-demo.netlify.app/) · [Watch the demo](https://www.youtube.com/watch?v=20Sa4PoC53U) · [Design board](https://www.figma.com/design/Pdso8S5FWJJRf3VPq0Ei8E/U10_Testing?node-id=246-4825) · [How it works](#how-it-works) · [Run it locally](#run-it-locally)
 
 <br>
 
@@ -85,6 +85,13 @@ Arranged in radial layouts rather than rows, it makes large volumes of email eas
     <td align="center"><b>4. Email</b><br><sub>Click a dot to read it. Arrow keys step between emails.</sub></td>
   </tr>
 </table>
+
+## Design board
+
+The rough idea board behind PLOT lives in Figma.
+
+- [**Open the design board in Figma**](https://www.figma.com/design/Pdso8S5FWJJRf3VPq0Ei8E/U10_Testing?node-id=246-4825)
+- [Open it in Dev Mode](https://www.figma.com/design/Pdso8S5FWJJRf3VPq0Ei8E/U10_Testing?node-id=246-4825&m=dev) to inspect spacing, colours and type (needs a Figma account with Dev Mode access)
 
 ## Features
 
