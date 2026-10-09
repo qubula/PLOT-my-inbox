@@ -20,23 +20,37 @@ export const C = {
 };
 
 // The opening runs on sound effects only. The music starts at REVEAL, when the
-// pile of emails drops away and PLOT appears; every scene after that is whole bars.
-export const REVEAL = 200;
-export const BEATS = {
-  intro: REVEAL + bars(2), // we keep everything → cards flood the screen → they drop → PLOT
-  map: bars(8),            // Themes → Spaces → Clusters → emails
-  ui: bars(4),             // the real interface: open an email, highlight a line
-  decay: bars(3),
-  organise: bars(4),
-  tree: bars(3),
-  end: bars(3),            // the music's own ending plays under the end card
-};
-export const TOTAL = Object.values(BEATS).reduce((a, b) => a + b, 0);
+// pile of emails drops away and PLOT appears; every segment after that is whole bars.
+// Text cards ('words') stand on their own between the scenes, so the screen
+// never asks you to read and watch at the same time.
+export const REVEAL = 206;
+export type Seg = { key: string; dur: number; words?: Word[]; tone?: 'light' | 'dark' };
+export type Word = { t: string; accent?: string };
+export const SEGMENTS: Seg[] = [
+  { key: 'intro', dur: REVEAL + bars(1) },   // we keep everything → the pile → and read none of it → the flood → PLOT
+  { key: 'whatIs', dur: bars(1), tone: 'dark', words: [{ t: 'PLOT sorts' }, { t: 'your inbox' }, { t: 'by meaning.', accent: '#3797B8' }] },
+  { key: 'levels', dur: bars(1), tone: 'light', words: [{ t: 'Themes.' }, { t: 'Spaces.' }, { t: 'Clusters.', accent: '#E6D539' }] },
+  { key: 'map', dur: bars(6) },
+  { key: 'openWords', dur: bars(1), tone: 'dark', words: [{ t: 'Click an email' }, { t: 'to read it.', accent: '#FF9FD4' }] },
+  { key: 'uiOpen', dur: bars(2) },
+  { key: 'markWords', dur: bars(1), tone: 'light', words: [{ t: 'Highlight' }, { t: 'what matters.', accent: '#F9FF8D' }] },
+  { key: 'uiRead', dur: bars(2) },
+  { key: 'ageWords', dur: bars(1), tone: 'dark', words: [{ t: 'Old emails' }, { t: 'fade away.', accent: '#AFAFAF' }] },
+  { key: 'decay', dur: bars(2) },
+  { key: 'orgWords', dur: bars(1), tone: 'light', words: [{ t: 'You decide' }, { t: 'what goes where.', accent: '#62E599' }] },
+  { key: 'organise', dur: bars(3) },
+  { key: 'treeWords', dur: bars(1), tone: 'dark', words: [{ t: 'Delete old mail.' }, { t: 'Grow your tree.', accent: '#62E599' }] },
+  { key: 'tree', dur: bars(2) },
+  { key: 'end', dur: bars(3) },              // the music's own ending plays under the end card
+];
+export const START: Record<string, number> = (() => { const o: Record<string, number> = {}; let t = 0; for (const s of SEGMENTS) { o[s.key] = t; t += s.dur; } return o; })();
+export const TOTAL = SEGMENTS.reduce((a, s) => a + s.dur, 0);
+export const segDur = (key: string) => SEGMENTS.find(s => s.key === key)!.dur;
 
 // No numbers from the demo inbox on screen: every inbox is different.
 export const COPY = {
-  keep: 'We keep everything.',
-  read: 'And read almost none of it.',
+  keep: [{ t: 'We keep' }, { t: 'everything.' }] as Word[],
+  read: [{ t: 'And read' }, { t: 'almost none' }, { t: 'of it.', accent: '#CD3D5C' }] as Word[],
   meaning: 'Sorted by meaning.',
   meaningSub: 'into Themes, Spaces and Clusters',
   spaces: 'Zoom in.',

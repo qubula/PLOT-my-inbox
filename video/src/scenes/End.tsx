@@ -1,6 +1,6 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
-import { BEATS, C, CLUSTER, COPY } from '../config';
+import { C, CLUSTER, COPY, segDur } from '../config';
 import { LOGO, MONO, UI } from '../fonts';
 import { ramp, sp } from '../anim';
 import { EmailNode } from '../components/EmailNode';
@@ -10,7 +10,7 @@ const SEED = (CLUSTER.nodes as any[])[3].seed;
 export const End: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const fade = 1 - ramp(f, BEATS.end - 20, BEATS.end - 2);
+  const fade = 1 - ramp(f, segDur('end') - 20, segDur('end') - 2);
   return (
     <AbsoluteFill style={{ background: C.light, opacity: fade }}>
       <div style={{ position: 'absolute', top: 400, left: 0, right: 0, display: 'flex', justifyContent: 'center', fontFamily: LOGO, fontSize: 250, letterSpacing: '-0.04em', lineHeight: 1 }}>

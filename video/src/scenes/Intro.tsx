@@ -1,16 +1,16 @@
-// We keep everything → emails land on top of each other, faster and faster,
-// until they cover the screen → they all drop away and PLOT is underneath →
-// the camera dives through its O into the map.
+// "We keep everything." → the pile → "And read almost none of it." → emails land
+// on top of each other, faster and faster, until they cover the screen → they
+// all drop away and PLOT is underneath (the music starts here).
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
-import { BEATS, C, COPY, INBOX, REVEAL } from '../config';
+import { AbsoluteFill, Easing, interpolate, Sequence, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { C, COPY, INBOX, REVEAL } from '../config';
 import { LOGO, UI } from '../fonts';
 import { ramp, sp, BOUNCE } from '../anim';
-import { Caption } from '../components/Caption';
+import { Words } from '../components/Words';
 import { Doc, EmailCard, Folder, rnd } from '../components/Desk';
 
 export const I = {
-  pileEnd: 82, deal: 86, full: REVEAL - 12, drop: REVEAL, dive: BEATS.intro - 28, end: BEATS.intro,
+  w1: 0, pile: 36, w2: 92, deal: 134, full: REVEAL - 10, drop: REVEAL,
 };
 
 // ---- the pile: folders, files and a few emails, arriving faster and faster ----
@@ -25,7 +25,7 @@ export const PILE = Array.from({ length: N }, (_, i) => {
     r: i === 0 ? -3 : (rnd(i, 3) - 0.5) * 34, s: i === 0 ? 250 : kind === 'card' ? 0.62 + rnd(i, 4) * 0.25 : 92 + rnd(i, 4) * 70,
     color: PALETTE[Math.floor(rnd(i, 8) * PALETTE.length)], variant: Math.floor(rnd(i, 9) * 4),
     label: rnd(i, 10) > 0.4 ? LABELS[i % LABELS.length] : undefined,
-    at: i === 0 ? 2 : Math.round(8 + 68 * Math.sqrt(i / N)),
+    at: I.pile + (i === 0 ? 1 : Math.round(5 + 48 * Math.sqrt(i / N))),
   };
 });
 
@@ -35,7 +35,7 @@ const MAIL = INBOX.list;
 const DEAL_TIMES = (() => {
   const t: number[] = [I.deal, I.deal + 13, I.deal + 24];
   let gap = 9;
-  while (t[t.length - 1] < I.full - 2) { t.push(t[t.length - 1] + gap); gap = Math.max(0.45, gap * 0.84); }
+  while (t[t.length - 1] < I.full - 2) { t.push(t[t.length - 1] + gap); gap = Math.max(0.45, gap * 0.78); }
   return t;
 })();
 // a shuffled grid, twice over, so the cards end up covering the whole frame
@@ -60,30 +60,27 @@ const fallY = (f: number, delay: number) => { const t = Math.max(0, f - I.drop -
 export const Intro: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const count = Math.round(interpolate(f, [4, I.pileEnd - 6], [1, 999], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.in(Easing.quad) }));
+  const count = Math.round(interpolate(f, [I.pile + 2, I.w2 - 4], [1, 999], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.in(Easing.quad) }));
   const dark = f >= I.drop - 1;
 
-  // the wordmark: monospaced and centred; its O sits half an advance right of centre
-  const FS = 230, ADV = FS * 0.82;
-  const OX = 540 + ADV / 2, OY = 800;
-  const zr = ramp(f, I.dive - 10, I.dive + 14, Easing.inOut(Easing.cubic));
-  const zoom = Math.pow(80, ramp(f, I.dive, I.end, Easing.in(Easing.cubic)));
+  // the wordmark, centred a little above the middle of the frame
+  const FS = 250, ADV = FS * 0.82, OY = 600;
 
   return (
     <AbsoluteFill style={{ background: dark ? C.themes : C.light, overflow: 'hidden' }}>
       {/* PLOT waits underneath the pile */}
       {dark ? (
-        <div style={{ position: 'absolute', inset: 0, transform: `translateX(${-(ADV / 2) * zr}px) scale(${zoom})`, transformOrigin: `${OX}px ${OY}px` }}>
+        <div style={{ position: 'absolute', inset: 0 }}>
           {'PLOT'.split('').map((ch, i) => {
             const t = sp(f, fps, I.drop + 4 + i * 3, BOUNCE);
-            return <div key={i} style={{ position: 'absolute', left: OX + (i - 2) * ADV - ADV / 2, top: OY - FS * 0.5, width: ADV, textAlign: 'center', fontFamily: LOGO, fontSize: FS, lineHeight: 1, color: '#fff',
+            return <div key={i} style={{ position: 'absolute', left: 540 + (i - 2) * ADV, top: OY - FS * 0.5, width: ADV, textAlign: 'center', fontFamily: LOGO, fontSize: FS, lineHeight: 1, color: '#fff',
               transform: `translateY(${(1 - t) * 60}px) scale(${0.7 + 0.3 * t})`, opacity: Math.min(1, t * 1.4) }}>{ch}</div>;
           })}
         </div>
       ) : null}
 
       {/* the pile */}
-      {f < I.drop + 40 ? PILE.map(it => {
+      {f >= I.pile && f < I.drop + 40 ? PILE.map(it => {
         const t = spring({ frame: f - it.at, fps, config: BOUNCE });
         if (t <= 0.001) return null;
         const y = it.y - (1 - t) * 40 + fallY(f, it.i % 5);
@@ -115,8 +112,9 @@ export const Intro: React.FC = () => {
         </div>;
       }) : null}
 
-      <Caption text={COPY.keep} delay={4} out={I.pileEnd - 6} />
-      <Caption text={COPY.read} delay={I.deal + 2} out={I.drop - 3} />
+      {/* the words get the screen to themselves */}
+      <Sequence from={I.w1} durationInFrames={I.pile - I.w1} layout="none"><Words words={COPY.keep} wipe={false} /></Sequence>
+      <Sequence from={I.w2} durationInFrames={I.deal - I.w2} layout="none"><Words words={COPY.read} tone="dark" gap={12} /></Sequence>
     </AbsoluteFill>
   );
 };

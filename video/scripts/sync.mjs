@@ -61,7 +61,6 @@ const AUDIO = {
   'mail.mp3': 'liecio-message-notification-190034.mp3',
   'pop.mp3': 'soft_pop_#4-1791553448647.mp3',
   'pencil.mp3': 'u_viypcpsnud-pencil_scribble_9-389258.mp3',
-  'drip.mp3': 'freesound_community-water-drip-45622.mp3',
 };
 for (const [to, from] of Object.entries(AUDIO)) fs.copyFileSync(path.join(A, from), path.join(AD, to));
 
@@ -72,7 +71,7 @@ for (const [to, from] of Object.entries(AUDIO)) fs.copyFileSync(path.join(A, fro
 const ff = args => execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...args]);
 const SONG = path.join(A, 'bombinsound-stomp-drum-percussion-version-6-power-up-577420.mp3');
 const PHRASE = 3.4288;
-const PHRASES = [0, 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 5];
+const PHRASES = [0, 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 3, 5];
 const parts = PHRASES.map((k, i) => `[0:a]atrim=${(k * PHRASE).toFixed(4)}:${((k + 1) * PHRASE).toFixed(4)},asetpts=PTS-STARTPTS,afade=t=in:d=0.004,afade=t=out:st=${(PHRASE - 0.004).toFixed(4)}:d=0.004[p${i}]`);
 parts.push(`[0:a]atrim=${(6 * PHRASE).toFixed(4)},asetpts=PTS-STARTPTS,afade=t=in:d=0.004[tail]`);
 const filter = parts.join(';') + ';' + PHRASES.map((_, i) => `[p${i}]`).join('') + `[tail]concat=n=${PHRASES.length + 1}:v=0:a=1[out]`;

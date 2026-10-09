@@ -4,7 +4,6 @@ import { AbsoluteFill, interpolateColors, spring, useCurrentFrame, useVideoConfi
 import { C, COPY } from '../config';
 import { MONO, UI } from '../fonts';
 import { ramp, sp } from '../anim';
-import { Caption } from '../components/Caption';
 import { Cursor } from '../components/Pill';
 import { EmailNode } from '../components/EmailNode';
 import { Icon } from '../components/Icon';
@@ -12,10 +11,10 @@ import { LAYOUT } from './MapScene';
 import { map } from '../geom';
 import { Callout } from '../components/Callout';
 
-export const ORG = { selA: 34, selB: 58, panel: 66, toGroup: 80, group: 104, fly: 110, note: 140 };
+export const ORG = { selA: 22, selB: 40, panel: 46, toGroup: 56, group: 76, fly: 82, note: 108 };
 const NEW = '#62E599';
 const { nodes, tCl, k2, Z3, SC, ringsR } = LAYOUT;
-const CY = 760;
+const CY = 640;
 const P = (x: number, y: number) => [SC.x + (x - tCl.wx) * Z3, CY + (y - tCl.wy) * Z3];
 const floating = nodes.filter(n => n.ring < 0);
 const A = floating[0], Bn = floating[1];
@@ -92,7 +91,6 @@ export const Organise: React.FC = () => {
           <Callout at={[mx, my]} r={rr} dx={-40} dy={200} text="a new thread" from={ORG.note + 4} />
         </>;
       })()}
-      <Caption text={COPY.organise} sub={COPY.organiseSub} delay={4} />
     </AbsoluteFill>
   );
 };

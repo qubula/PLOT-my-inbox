@@ -4,21 +4,22 @@
 // (src/generated/cluster.json is read from the running app; see README).
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, interpolateColors, spring, useCurrentFrame, useVideoConfig } from 'remotion';
-import { BEAT, BEATS, C, CLUSTER, COPY, INBOX } from '../config';
+import { BEAT, C, CLUSTER, INBOX, segDur } from '../config';
 import { Callout } from '../components/Callout';
 import { ramp, sp, BOUNCE } from '../anim';
-import { Caption } from '../components/Caption';
 import { Cursor } from '../components/Pill';
 import { EmailNode } from '../components/EmailNode';
 import { map, sizeScale } from '../geom';
 
 const b = (n: number) => Math.round(n * BEAT);
+const step = (click: number) => ({ zoom: click + 6, end: click + 46, note: click + 44, cur: click + 46, open: click + 56 });
+const C1 = b(5), C2 = b(10), C3 = b(15);
 export const T = {
-  themeIn: 0, note1: 30,
-  cur1: 52, open1: 68, click1: b(7), zoom1: b(7) + 6, zoom1End: b(7) + 48,
-  note2: b(7) + 54, cur2: b(7) + 60, open2: b(7) + 74, click2: b(14), zoom2: b(14) + 6, zoom2End: b(14) + 48,
-  note3: b(14) + 52, cur3: b(14) + 56, open3: b(14) + 70, click3: b(21), zoom3: b(21) + 6, zoom3End: b(21) + 52,
-  emailsFly: b(21) + 36, colour: b(21) + 70, note4: b(21) + 90, end: BEATS.map,
+  themeIn: 0, note1: 14,
+  cur1: 26, open1: 42, click1: C1, zoom1: step(C1).zoom, zoom1End: step(C1).end,
+  note2: step(C1).note, cur2: step(C1).cur, open2: step(C1).open, click2: C2, zoom2: step(C2).zoom, zoom2End: step(C2).end,
+  note3: step(C2).note, cur3: step(C2).cur, open3: step(C2).open, click3: C3, zoom3: step(C3).zoom, zoom3End: C3 + 52,
+  emailsFly: C3 + 30, colour: C3 + 56, note4: C3 + 72, end: segDur('map'),
 };
 
 // ---- geometry, in one world (units = app pixels at the Themes level) ----
@@ -172,10 +173,6 @@ export const MapScene: React.FC = () => {
       </svg>
       {notes}
       {cursor}
-      <Caption text={COPY.meaning} sub={COPY.meaningSub} color="#FFFFFF" delay={8} out={T.zoom1 - 2} />
-      <Caption text={COPY.spaces} color="#FFFFFF" delay={T.zoom1 + 10} out={T.zoom2 - 2} />
-      <Caption text={COPY.clusters} delay={T.zoom2 + 12} out={T.zoom3 - 2} />
-      <Caption text={COPY.emails} sub={COPY.emailsSub} delay={T.zoom3 + 16} />
     </AbsoluteFill>
   );
 };
