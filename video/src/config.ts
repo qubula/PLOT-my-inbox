@@ -1,11 +1,11 @@
 // Copy, timings and colours for the PLOT video. Change a line and re-render.
-// The edit is cut to the music: about 158 BPM, so one bar is 1.519 s (about 45.6 frames).
+// The edit is cut to the music: 140 BPM, so one bar is 1.714 s (about 51.4 frames).
 import inbox from './generated/inbox.json';
 import cluster from './generated/cluster.json';
 
 export const FPS = 30;
 export const sec = (s: number) => Math.round(s * FPS);
-export const BAR = 0.3797 * 4 * FPS;   // beat measured from the track
+export const BAR = 0.4286 * 4 * FPS;   // beat measured from the track
 export const BEAT = BAR / 4;
 export const bars = (n: number) => Math.round(n * BAR);
 export const INBOX = inbox;
@@ -19,19 +19,19 @@ export const C = {
   threads: ['#3797B8', '#E6D539', '#CD3D5C', '#FF9FD4', '#E8A26B', '#FF4A00', '#62E599'],
 };
 
-// Beat lengths, in bars of the music.
+// The opening runs on sound effects only. The music starts at REVEAL, when the
+// pile of emails drops away and PLOT appears; every scene after that is whole bars.
+export const REVEAL = 200;
 export const BEATS = {
-  intro: bars(6),     // we keep everything → too much → it crumples into a ball → the ball becomes PLOT's O
-  map: bars(9),       // Themes → Spaces → Clusters → emails (the drop lands on the first frame)
-  decay: bars(4),
-  organise: bars(5),
-  tree: bars(4),
-  end: bars(4),
+  intro: REVEAL + bars(2), // we keep everything → cards flood the screen → they drop → PLOT
+  map: bars(8),            // Themes → Spaces → Clusters → emails
+  ui: bars(4),             // the real interface: open an email, highlight a line
+  decay: bars(3),
+  organise: bars(4),
+  tree: bars(3),
+  end: bars(3),            // the music's own ending plays under the end card
 };
 export const TOTAL = Object.values(BEATS).reduce((a, b) => a + b, 0);
-// Start the track so its drop (63.80 s, after the quiet break) lands on the first frame of the map.
-export const DROP = 63.8;
-export const MUSIC_START = DROP - BEATS.intro / FPS;
 
 // No numbers from the demo inbox on screen: every inbox is different.
 export const COPY = {
@@ -43,6 +43,8 @@ export const COPY = {
   clusters: 'Down to the topic.',
   emails: 'Every dot is an email.',
   emailsSub: 'Same subject, same colour',
+  open: 'Click an email to read it.',
+  highlight: 'Highlight what matters.',
   decay: 'Every email shows its age.',
   decaySub: 'Older emails fade and shrink',
   organise: 'The decisions stay yours.',
@@ -51,5 +53,5 @@ export const COPY = {
   treeSub: 'Delete old emails and watch it grow',
   tagline: 'Rediscover your inbox.',
   note: 'A proof of concept, running on a demo inbox',
-  credits: 'Music by Musinova from Pixabay · Sound effects from Pixabay and ElevenLabs',
+  credits: 'Music by BombinSound from Pixabay · Sound effects from Pixabay and ElevenLabs',
 };

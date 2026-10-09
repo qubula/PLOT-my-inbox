@@ -89,7 +89,7 @@ export const Organise: React.FC = () => {
           <svg width={1080} height={1350} style={{ position: 'absolute', inset: 0 }}>
             <circle cx={mx} cy={my} r={rr} fill="none" stroke="#000" strokeWidth={2} strokeDasharray={`${L * t} ${L}`} transform={`rotate(-90 ${mx} ${my})`} opacity={t > 0 ? 1 : 0} />
           </svg>
-          <Callout at={[mx, my]} r={rr} dx={-260} dy={0} text="a new thread" from={ORG.note + 4} />
+          <Callout at={[mx, my]} r={rr} dx={-40} dy={200} text="a new thread" from={ORG.note + 4} />
         </>;
       })()}
       <Caption text={COPY.organise} sub={COPY.organiseSub} delay={4} />

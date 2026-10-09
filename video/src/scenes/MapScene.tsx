@@ -15,10 +15,10 @@ import { map, sizeScale } from '../geom';
 const b = (n: number) => Math.round(n * BEAT);
 export const T = {
   themeIn: 0, note1: 30,
-  cur1: 52, open1: 68, click1: b(8), zoom1: b(8) + 6, zoom1End: b(8) + 48,
-  note2: b(8) + 54, cur2: b(8) + 60, open2: b(8) + 74, click2: b(16), zoom2: b(16) + 6, zoom2End: b(16) + 48,
-  note3: b(16) + 52, cur3: b(16) + 56, open3: b(16) + 70, click3: b(24), zoom3: b(24) + 6, zoom3End: b(24) + 52,
-  emailsFly: b(24) + 36, colour: b(24) + 70, note4: b(24) + 90, end: BEATS.map,
+  cur1: 52, open1: 68, click1: b(7), zoom1: b(7) + 6, zoom1End: b(7) + 48,
+  note2: b(7) + 54, cur2: b(7) + 60, open2: b(7) + 74, click2: b(14), zoom2: b(14) + 6, zoom2End: b(14) + 48,
+  note3: b(14) + 52, cur3: b(14) + 56, open3: b(14) + 70, click3: b(21), zoom3: b(21) + 6, zoom3End: b(21) + 52,
+  emailsFly: b(21) + 36, colour: b(21) + 70, note4: b(21) + 90, end: BEATS.map,
 };
 
 // ---- geometry, in one world (units = app pixels at the Themes level) ----
@@ -145,16 +145,18 @@ export const MapScene: React.FC = () => {
   const v3 = (x: number, y: number) => proj({ c: [tSpace.wx, tSpace.wy], z: Z2 }, x, y) as [number, number];
   const v4 = (x: number, y: number) => proj({ c: [tCl.wx, tCl.wy], z: Z3 }, x, y) as [number, number];
   const sp0 = sp1.filter(m => m !== tSpace)[0];
-  const cl0 = cl.filter(s => s !== tCl)[2];
-  const pink = nodes.find(n => n.color === '#FF9FD4')!;
-  const flo = nodes.find(n => n.ring < 0)!;
+  // label the leftmost cluster, from above: clear of the cursor, which is over the target cluster
+  const cl0 = cl.filter(s => s !== tCl).reduce((a, b) => (b.wx < a.wx ? b : a));
+  // the leftmost email of the pink thread, labelled from outside the rings; the lowest lone email, from below
+  const pink = nodes.filter(n => n.color === '#FF9FD4').reduce((a, b) => (b.wx < a.wx ? b : a));
+  const flo = nodes.filter(n => n.ring < 0).reduce((a, b) => (b.wy > a.wy ? b : a));
   const notes = (
     <>
       <Callout at={v1(TPOS[1][0], TPOS[1][1])} r={TR * Z0} dx={60} dy={-270} text="a Theme" from={T.note1} out={T.zoom1 - 4} color="#FFFFFF" />
       <Callout at={v2(sp0.wx, sp0.wy)} r={sp0.R * Z1} dx={0} dy={-190} text="a Space" from={T.note2} out={T.zoom2 - 4} color="#FFFFFF" />
-      <Callout at={v3(cl0.wx, cl0.wy)} r={cl0.R * Z2} dx={120} dy={-160} text="a Cluster" from={T.note3} out={T.zoom3 - 4} />
-      <Callout at={v4(pink.wx, pink.wy)} r={pink.R * Z3} dx={-30} dy={190} text="a thread" from={T.note4} />
-      <Callout at={v4(flo.wx, flo.wy)} r={flo.R * Z3} dx={150} dy={180} text="on its own" from={T.note4 + 8} />
+      <Callout at={v3(cl0.wx, cl0.wy)} r={cl0.R * Z2} dx={190} dy={-20} text="a Cluster" from={T.note3} out={T.zoom3 - 4} />
+      <Callout at={v4(pink.wx, pink.wy)} r={pink.R * Z3} dx={-70} dy={210} text="a thread" from={T.note4} />
+      <Callout at={v4(flo.wx, flo.wy)} r={flo.R * Z3} dx={60} dy={190} text="on its own" from={T.note4 + 8} />
     </>
   );
 

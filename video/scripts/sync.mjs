@@ -3,6 +3,7 @@
 // numbers and a real cluster's layout. Music and sound effects come from
 // ../Audio; see README for credits.
 import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -55,17 +56,28 @@ fs.writeFileSync(path.join(OUT, 'inbox.json'), JSON.stringify({
 const A = path.join(ROOT, '..', 'Audio');
 const AD = path.join(ROOT, 'public', 'audio'); fs.mkdirSync(AD, { recursive: true });
 const AUDIO = {
-  'music.mp3': 'musinova-idm-electronic-science-technology-483366.mp3',
   'riser.mp3': 'dbsound-simple-short-riser-2-613769.mp3',
   'shimmer.mp3': 'Ethereal,_shimmering_#2-1791553675461.mp3',
-  'ping-1.mp3': 'email_inbox_notifica_#2-1791553586714.mp3',
-  'ping-2.mp3': 'email_inbox_notifica_#3-1791553578877.mp3',
-  'ping-3.mp3': 'inbox_notification_s_#3-1791553604512.mp3',
+  'mail.mp3': 'liecio-message-notification-190034.mp3',
   'pop.mp3': 'soft_pop_#4-1791553448647.mp3',
-  'scribble.mp3': 'freesound_community-scribble-6144.mp3',
   'pencil.mp3': 'u_viypcpsnud-pencil_scribble_9-389258.mp3',
-  'crumple.mp3': 'oxidvideos-crumpling-paper-wrapping-478933.mp3',
   'drip.mp3': 'freesound_community-water-drip-45622.mp3',
 };
 for (const [to, from] of Object.entries(AUDIO)) fs.copyFileSync(path.join(A, from), path.join(AD, to));
-console.log('synced', stages.length, 'tree stages,', inbox.length, 'subjects,', Object.keys(AUDIO).length, 'sounds');
+
+// Music: the stomp track is 6 phrases of 2 bars (3.4288 s at 140 BPM) plus an
+// ending. PHRASES lists which phrase plays when; repeating the near-identical
+// phrases 3 and 4 makes it longer, and the track's own last phrase and ending
+// still close it. Cuts sit just before a kick, where the track is quiet.
+const ff = args => execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...args]);
+const SONG = path.join(A, 'bombinsound-stomp-drum-percussion-version-6-power-up-577420.mp3');
+const PHRASE = 3.4288;
+const PHRASES = [0, 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 5];
+const parts = PHRASES.map((k, i) => `[0:a]atrim=${(k * PHRASE).toFixed(4)}:${((k + 1) * PHRASE).toFixed(4)},asetpts=PTS-STARTPTS,afade=t=in:d=0.004,afade=t=out:st=${(PHRASE - 0.004).toFixed(4)}:d=0.004[p${i}]`);
+parts.push(`[0:a]atrim=${(6 * PHRASE).toFixed(4)},asetpts=PTS-STARTPTS,afade=t=in:d=0.004[tail]`);
+const filter = parts.join(';') + ';' + PHRASES.map((_, i) => `[p${i}]`).join('') + `[tail]concat=n=${PHRASES.length + 1}:v=0:a=1[out]`;
+ff(['-i', SONG, '-filter_complex', filter, '-map', '[out]', '-ar', '44100', '-b:a', '256k', path.join(AD, 'music.mp3')]);
+
+// A short paper flick for each email card that lands, cut from the crumple recording
+ff(['-i', path.join(A, 'oxidvideos-crumpling-paper-wrapping-478933.mp3'), '-af', 'atrim=0.330:0.440,asetpts=PTS-STARTPTS,afade=t=in:d=0.003,afade=t=out:st=0.05:d=0.06', path.join(AD, 'flick.mp3')]);
+console.log('synced', stages.length, 'tree stages,', inbox.length, 'subjects,', Object.keys(AUDIO).length + 2, 'sounds');

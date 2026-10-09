@@ -1,25 +1,23 @@
-// We keep everything → it piles up → it flies at you → the mess is scrunched
-// into a paper ball → the ball drops in as PLOT's O, and the camera falls through it.
+// We keep everything → emails land on top of each other, faster and faster,
+// until they cover the screen → they all drop away and PLOT is underneath →
+// the camera dives through its O into the map.
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
-import { BEAT, C, COPY, INBOX, bars } from '../config';
+import { BEATS, C, COPY, INBOX, REVEAL } from '../config';
 import { LOGO, UI } from '../fonts';
 import { ramp, sp, BOUNCE } from '../anim';
 import { Caption } from '../components/Caption';
-import { Cursor } from '../components/Pill';
-import { Doc, EmailCard, Folder, PaperBall, rnd } from '../components/Desk';
+import { Doc, EmailCard, Folder, rnd } from '../components/Desk';
 
 export const I = {
-  pileEnd: bars(2), burst: bars(2) + 4, floodEnd: bars(3.5) - 8,
-  crumple: bars(3.5), ball: bars(3.5) + 16, dark: bars(4.25), land: bars(4.25) + 18, morph: bars(4.25) + 22,
-  click: bars(5.25), through: bars(5.25) + 4, end: bars(6),
+  pileEnd: 82, deal: 86, full: REVEAL - 12, drop: REVEAL, dive: BEATS.intro - 28, end: BEATS.intro,
 };
 
-const BALL = { x: 540, y: 790 };
+// ---- the pile: folders, files and a few emails, arriving faster and faster ----
 const LABELS = ['Receipts', 'Newsletters', 'Travel', 'Work', 'Bills', 'Unsorted', 'Photos', 'Old stuff', 'Promotions', 'Family', 'Misc', 'Orders'];
 const PALETTE = [...C.threads, C.themes, C.panel];
-const N = 40;
-const ITEMS = Array.from({ length: N }, (_, i) => {
+const N = 34;
+export const PILE = Array.from({ length: N }, (_, i) => {
   const kind = i === 0 ? 'inbox' : i % 5 === 1 ? 'doc' : i % 5 === 3 ? 'card' : 'folder';
   return {
     kind, i,
@@ -27,122 +25,98 @@ const ITEMS = Array.from({ length: N }, (_, i) => {
     r: i === 0 ? -3 : (rnd(i, 3) - 0.5) * 34, s: i === 0 ? 250 : kind === 'card' ? 0.62 + rnd(i, 4) * 0.25 : 92 + rnd(i, 4) * 70,
     color: PALETTE[Math.floor(rnd(i, 8) * PALETTE.length)], variant: Math.floor(rnd(i, 9) * 4),
     label: rnd(i, 10) > 0.4 ? LABELS[i % LABELS.length] : undefined,
-    at: i === 0 ? 2 : Math.floor(BEAT * (1 + Math.log2(i + 1))) + Math.floor(rnd(i, 6) * 6),
+    at: i === 0 ? 2 : Math.round(8 + 68 * Math.sqrt(i / N)),
   };
 });
+
+// ---- the deal: email cards slapped onto the screen like a deck of cards ----
+// one, two, three on the beat, then each gap is shorter than the last.
 const MAIL = INBOX.list;
-const FLOOD = Array.from({ length: 84 }, (_, i) => ({
-  at: I.burst + i * 0.66, ang: rnd(i, 7) * Math.PI * 2, spin: (rnd(i, 8) - 0.5) * 34,
-  m: MAIL[i % MAIL.length], dot: C.threads[i % 7], attach: i % 4 === 2, unread: i % 3 === 0,
-}));
+const DEAL_TIMES = (() => {
+  const t: number[] = [I.deal, I.deal + 13, I.deal + 24];
+  let gap = 9;
+  while (t[t.length - 1] < I.full - 2) { t.push(t[t.length - 1] + gap); gap = Math.max(0.45, gap * 0.84); }
+  return t;
+})();
+// a shuffled grid, twice over, so the cards end up covering the whole frame
+const CELLS = (() => {
+  const out: [number, number][] = [];
+  for (let pass = 0; pass < 2; pass++) for (let r = 0; r < 11; r++) for (let c = 0; c < 3; c++) out.push([150 + c * 390 + (pass ? 195 : 0) + (rnd(r * 3 + c + pass * 50, 21) - 0.5) * 90, 60 + r * 125 + (pass ? 62 : 0) + (rnd(r * 3 + c + pass * 50, 22) - 0.5) * 50]);
+  return out.map((p, i) => ({ p, k: rnd(i, 23) })).sort((a, b) => a.k - b.k).map(o => o.p);
+})();
+export const CARDS = DEAL_TIMES.map((at, i) => {
+  const [x, y] = i < 3 ? [[540, 760], [430, 900], [650, 640]][i] : CELLS[(i - 3) % CELLS.length];
+  return { at: Math.round(at), x, y, r: (rnd(i, 24) - 0.5) * 22, w: 430 + rnd(i, 25) * 80, m: MAIL[i % MAIL.length], dot: C.threads[i % 7], attach: i % 4 === 2, unread: i % 3 === 0,
+    fall: rnd(i, 26) * 6, spin: (rnd(i, 27) - 0.5) * 70, drift: (rnd(i, 28) - 0.5) * 260 };
+});
 
 const Badge: React.FC<{ n: string }> = ({ n }) => (
   <div style={{ position: 'absolute', right: -22, top: -26, minWidth: 64, height: 64, padding: '0 14px', boxSizing: 'border-box', borderRadius: 32, background: C.attach, color: '#fff', fontFamily: UI, fontWeight: 700, fontSize: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{n}</div>
 );
 
+// everything falls away at the drop, each piece a little later than the last
+const fallY = (f: number, delay: number) => { const t = Math.max(0, f - I.drop - delay); return t * t * 2.4; };
+
 export const Intro: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const burst = ramp(f, I.burst, I.burst + 30, Easing.in(Easing.cubic));
-  // everything still on screen is pulled into the ball
-  const pull = ramp(f, I.crumple, I.crumple + 14, Easing.in(Easing.cubic));
   const count = Math.round(interpolate(f, [4, I.pileEnd - 6], [1, 999], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.in(Easing.quad) }));
+  const dark = f >= I.drop - 1;
 
-  // the wordmark: monospaced, centred; its O sits half an advance right of centre
+  // the wordmark: monospaced and centred; its O sits half an advance right of centre
   const FS = 230, ADV = FS * 0.82;
   const OX = 540 + ADV / 2, OY = 800;
-  const zr = ramp(f, I.click, I.through + 20, Easing.inOut(Easing.cubic));
-  const zoom = Math.pow(80, ramp(f, I.through, I.end, Easing.in(Easing.cubic)));
-  const darkR = ramp(f, I.dark, I.dark + 14, Easing.bezier(0.5, 0, 0.2, 1)) * 1700;
-  const press = Math.max(0, 1 - Math.abs(f - I.click) / 4);
-
-  // the ball: scrunched (creases re-roll), then a hop into the O
-  const form = spring({ frame: f - I.crumple - 4, fps, config: { damping: 9, stiffness: 140, mass: 0.7 } });
-  const squeeze = f < I.ball ? 1 + 0.12 * Math.sin((f - I.crumple) * 1.9) * (1 - ramp(f, I.crumple, I.ball)) : 1;
-  const seed = f < I.ball ? Math.floor((f - I.crumple) / 2) : Math.floor((I.ball - I.crumple) / 2);
-  const hop = ramp(f, I.dark + 2, I.land, Easing.inOut(Easing.quad));
-  const bx = BALL.x + (OX - BALL.x) * hop, by = BALL.y + (OY - BALL.y) * hop - Math.sin(hop * Math.PI) * 150;
-  const land = Math.max(0, 1 - Math.abs(f - I.land) / 5);
-  const ballR = (150 - 58 * hop) * form;
-  const morph = ramp(f, I.morph, I.morph + 8);
-  const letters = (i: number) => sp(f, fps, I.land - 4 + (i < 2 ? i : i - 1) * 3, BOUNCE);
+  const zr = ramp(f, I.dive - 10, I.dive + 14, Easing.inOut(Easing.cubic));
+  const zoom = Math.pow(80, ramp(f, I.dive, I.end, Easing.in(Easing.cubic)));
 
   return (
-    <AbsoluteFill style={{ background: C.light, overflow: 'hidden' }}>
-      {/* the pile: folders, files and emails, faster and faster */}
-      {f < I.crumple + 16 ? [...ITEMS.slice(1), ITEMS[0]].map(it => {
+    <AbsoluteFill style={{ background: dark ? C.themes : C.light, overflow: 'hidden' }}>
+      {/* PLOT waits underneath the pile */}
+      {dark ? (
+        <div style={{ position: 'absolute', inset: 0, transform: `translateX(${-(ADV / 2) * zr}px) scale(${zoom})`, transformOrigin: `${OX}px ${OY}px` }}>
+          {'PLOT'.split('').map((ch, i) => {
+            const t = sp(f, fps, I.drop + 4 + i * 3, BOUNCE);
+            return <div key={i} style={{ position: 'absolute', left: OX + (i - 2) * ADV - ADV / 2, top: OY - FS * 0.5, width: ADV, textAlign: 'center', fontFamily: LOGO, fontSize: FS, lineHeight: 1, color: '#fff',
+              transform: `translateY(${(1 - t) * 60}px) scale(${0.7 + 0.3 * t})`, opacity: Math.min(1, t * 1.4) }}>{ch}</div>;
+          })}
+        </div>
+      ) : null}
+
+      {/* the pile */}
+      {f < I.drop + 40 ? PILE.map(it => {
         const t = spring({ frame: f - it.at, fps, config: BOUNCE });
         if (t <= 0.001) return null;
-        const isInbox = it.i === 0;
-        const dx = it.x - 540, dy = it.y - 800, d = Math.hypot(dx, dy) || 1;
-        const z = isInbox ? 1 : 1 + burst * (2.5 + rnd(it.i, 9) * 3);
-        let x = isInbox ? it.x : 540 + (dx / d) * (d + burst * 900), y = isInbox ? it.y : 800 + (dy / d) * (d + burst * 900);
-        let op = isInbox ? 1 : 1 - burst;
-        let sc = t * z;
-        // the inbox shakes while the flood pours out of it
-        const shake = isInbox && f > I.burst ? Math.sin(f * 2.3) * 3 * (1 - pull) : 0;
-        if (isInbox) { x += (BALL.x - x) * pull; y += (BALL.y - y) * pull; sc *= 1 - pull * 0.9; op *= 1 - pull; }
-        if (op <= 0.01) return null;
+        const y = it.y - (1 - t) * 40 + fallY(f, it.i % 5);
+        if (y > 1700) return null;
         return (
-          <div key={it.i} style={{ position: 'absolute', left: x, top: y - (1 - t) * 40, transform: `translate(-50%,-50%) rotate(${it.r + burst * it.r + shake}deg) scale(${sc})`, opacity: op }}>
+          <div key={it.i} style={{ position: 'absolute', left: it.x, top: y, transform: `translate(-50%,-50%) rotate(${it.r + (f > I.drop ? (f - I.drop) * 2 : 0)}deg) scale(${t})` }}>
             <div style={{ position: 'relative' }}>
               {it.kind === 'inbox' ? <Folder w={it.s} color={C.themes} variant={1} tabs={[C.threads[0], C.threads[1], C.threads[2]]} label="Inbox" sub="all mail" />
                 : it.kind === 'doc' ? <Doc w={it.s * 0.62} color={it.color === C.panel || it.color === C.themes ? C.threads[0] : it.color} type={['PDF', 'DOCX', 'XLS', 'JPG'][it.i % 4]} />
                   : it.kind === 'card' ? <div style={{ transform: `scale(${it.s})` }}><EmailCard subject={MAIL[it.i % MAIL.length].s} from={MAIL[it.i % MAIL.length].from} date={MAIL[it.i % MAIL.length].d} dot={C.threads[it.i % 7]} w={340} /></div>
                     : <Folder w={it.s} color={it.color} variant={it.variant} label={it.s > 120 ? it.label : undefined} />}
-              {isInbox ? <Badge n={count >= 999 ? '999+' : String(count)} /> : null}
+              {it.i === 0 ? <Badge n={count >= 999 ? '999+' : String(count)} /> : null}
             </div>
           </div>
         );
       }) : null}
 
-      {/* the flood: emails fly out of the inbox at the camera */}
-      {f >= I.burst && f < I.crumple + 16 ? FLOOD.map((c, i) => {
-        if (c.at > I.floodEnd) return null;
-        const t = ramp(f, c.at, c.at + 32, Easing.in(Easing.quad));
-        if (t <= 0 || t >= 1) return null;
-        let z = 0.12 + t * 2.6, dist = 30 + t * 1050;
-        let x = 540 + Math.cos(c.ang) * dist, y = 800 + Math.sin(c.ang) * dist * 0.85;
-        x += (BALL.x - x) * pull; y += (BALL.y - y) * pull; z *= 1 - pull * 0.92;
-        const op = Math.min(1, t * 5) * (1 - ramp(t, 0.8, 1, Easing.linear)) * (1 - pull);
-        if (op <= 0.01) return null;
-        return <div key={i} style={{ position: 'absolute', left: x, top: y, transform: `translate(-50%,-50%) rotate(${c.spin * t}deg) scale(${z})`, opacity: op }}>
-          <EmailCard subject={c.m.s} from={c.m.from} date={c.m.d} dot={c.dot} attach={c.attach} unread={c.unread} />
+      {/* the deal: each card slaps down flat and stays */}
+      {f >= I.deal && f < I.drop + 40 ? CARDS.map((c, i) => {
+        if (f < c.at) return null;
+        const k = f - c.at;
+        const slap = k < 5 ? 1.22 - 0.22 * Easing.out(Easing.quad)(k / 5) : 1 + 0.015 * Math.max(0, 1 - (k - 5) / 4) * Math.sin((k - 5) * 1.6);
+        const fy = fallY(f, c.fall);
+        if (c.y + fy > 1800) return null;
+        const fr = f > I.drop ? (f - I.drop) : 0;
+        return <div key={i} style={{ position: 'absolute', left: c.x + fr * c.drift / 30, top: c.y + fy, transform: `translate(-50%,-50%) rotate(${c.r + fr * c.spin / 30}deg) scale(${slap})`,
+          filter: k < 5 ? `drop-shadow(0 ${18 * (1 - k / 5)}px 18px rgba(0,0,0,0.18))` : undefined }}>
+          <EmailCard subject={c.m.s} from={c.m.from} date={c.m.d} dot={c.dot} attach={c.attach} unread={c.unread} w={c.w} />
         </div>;
       }) : null}
 
-      {/* keep the headline readable while the flood passes under it */}
-      {f >= I.pileEnd - 8 && f < I.crumple + 8 ? <div style={{ position: 'absolute', left: 0, top: 0, width: 1080, height: 400,
-        background: `linear-gradient(${C.light} 60%, ${C.light}00)`, opacity: ramp(f, I.pileEnd - 8, I.pileEnd) * (1 - ramp(f, I.crumple, I.crumple + 8)) }} /> : null}
-
-      {/* dark opens from the ball */}
-      {f >= I.dark ? <svg width={1080} height={1350} style={{ position: 'absolute', inset: 0 }}><circle cx={BALL.x} cy={BALL.y} r={darkR} fill={C.themes} /></svg> : null}
-
-      {/* PLOT, with the ball as its O; then fall through the O */}
-      {f >= I.dark ? (
-        <div style={{ position: 'absolute', inset: 0, transform: `translateX(${-(ADV / 2) * zr}px) scale(${zoom})`, transformOrigin: `${OX}px ${OY}px` }}>
-          {'PLOT'.split('').map((ch, i) => {
-            const isO = i === 2;
-            const t = isO ? morph : letters(i);
-            if (t <= 0.001) return null;
-            return <div key={i} style={{ position: 'absolute', left: OX + (i - 2) * ADV - ADV / 2, top: OY - FS * 0.5, width: ADV, textAlign: 'center', fontFamily: LOGO, fontSize: FS, lineHeight: 1, color: '#fff',
-              transform: isO ? `scale(${(0.7 + 0.3 * t) * (1 - 0.06 * press)})` : `translateY(${(1 - t) * 50}px) scale(${0.6 + 0.4 * t})`, opacity: Math.min(1, t * 1.4) }}>{ch}</div>;
-          })}
-        </div>
-      ) : null}
-      {f >= I.crumple && morph < 1 ? (
-        <div style={{ position: 'absolute', left: bx, top: by, transform: `translate(-50%,-50%) rotate(${(f - I.crumple) * 2.2}deg) scale(${squeeze * (1 + 0.18 * land) * (1 - morph)}, ${(1 / squeeze) * (1 - 0.18 * land) * (1 - morph)})` }}>
-          <PaperBall R={Math.max(1, ballR)} seed={7 + seed} />
-        </div>
-      ) : null}
-
-      {f >= I.morph && f < I.through + 4 ? (() => {
-        const cm = sp(f, fps, I.morph, { damping: 26, stiffness: 90, mass: 1 });
-        return <Cursor x={900 + (OX - (ADV / 2) * zr - 900) * cm} y={1250 + (OY + FS * 0.02 - 1250) * cm} size={40} press={press} opacity={1 - ramp(f, I.through, I.through + 4)} />;
-      })() : null}
-
       <Caption text={COPY.keep} delay={4} out={I.pileEnd - 6} />
-      <Caption text={COPY.read} delay={I.pileEnd} out={I.crumple - 4} />
+      <Caption text={COPY.read} delay={I.deal + 2} out={I.drop - 3} />
     </AbsoluteFill>
   );
 };

@@ -10,7 +10,7 @@ import { DROPLETS } from '../icons';
 import stages from '../generated/tree.json';
 import { LAYOUT } from './MapScene';
 
-export const TREE = { first: 30, step: 14 };
+export const TREE = { first: 24, step: 13 };
 export const stageAt = (f: number) => Math.max(0, Math.min(8, Math.floor((f - TREE.first) / TREE.step) + 1));
 const batch = LAYOUT.nodes.filter(n => n.ring >= 0).slice(0, 8);
 const BASE = 1250, SCALE = 2.3;

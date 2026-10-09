@@ -8,6 +8,7 @@ import { MONO } from '../fonts';
 
 const SAFE = { l: 80, r: 1000, t: 300, b: 1270 };
 const SIZE = 25;
+const MIN = 110;
 
 type Props = { at: [number, number]; r?: number; dx: number; dy: number; text: string; from: number; out?: number; color?: string };
 export const Callout: React.FC<Props> = ({ at, r = 0, dx, dy, text, from, out, color = '#000' }) => {
@@ -17,8 +18,12 @@ export const Callout: React.FC<Props> = ({ at, r = 0, dx, dy, text, from, out, c
   const o = out === undefined ? 1 : 1 - ramp(f, out, out + 7);
   if (line <= 0 || o <= 0) return null;
   const w = text.length * SIZE * 0.6;
-  const lx = Math.min(SAFE.r - w / 2, Math.max(SAFE.l + w / 2, at[0] + dx));
-  const ly = Math.min(SAFE.b, Math.max(SAFE.t, at[1] + dy));
+  // keep a clear run of line between the label and the thing (MIN px at least)
+  const d0 = Math.hypot(dx, dy) || 1;
+  const need = r + MIN + (Math.abs(dx) > Math.abs(dy) ? w / 2 : 24);
+  const kx = d0 < need ? need / d0 : 1;
+  const lx = Math.min(SAFE.r - w / 2, Math.max(SAFE.l + w / 2, at[0] + dx * kx));
+  const ly = Math.min(SAFE.b, Math.max(SAFE.t, at[1] + dy * kx));
   const above = ly < at[1];
   // beside the thing: leave from the label's side; otherwise from its top or bottom
   const beside = Math.abs(ly - at[1]) < 40;
