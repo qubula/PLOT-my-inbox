@@ -1,0 +1,848 @@
+{
+ "themes": [
+  {
+   "id": 0,
+   "title": "Events & Recruitment",
+   "size": 0.3216,
+   "age": 0.6301
+  },
+  {
+   "id": 1,
+   "title": "Travel & Bookings",
+   "size": 0.1449,
+   "age": 0.5874
+  },
+  {
+   "id": 2,
+   "title": "Billing & Promotions",
+   "size": 0.2945,
+   "age": 0.6244
+  },
+  {
+   "id": 3,
+   "title": "Operations & Management",
+   "size": 0.239,
+   "age": 0.6098
+  }
+ ],
+ "macroTitle": "Seasonal Retail Promotional Campaigns",
+ "subTitle": "Summer Fashion Seasonal Discount Campaign",
+ "rings": [
+  59.42640687119285,
+  87.42640687119285
+ ],
+ "nodes": [
+  {
+   "id": 56,
+   "x": -59.42071189127305,
+   "y": 0.8226979730611959,
+   "age": 0.0333,
+   "seed": 21377,
+   "kb": 113.1,
+   "att": null,
+   "color": "#E6D539",
+   "subject": "Exclusive Summer Sale - Limited Time Only!",
+   "ring": 0
+  },
+  {
+   "id": 608,
+   "x": -56.68249989319344,
+   "y": -17.849146743715323,
+   "age": 0.361,
+   "seed": 6279,
+   "kb": 184.4,
+   "att": null,
+   "color": "#E6D539",
+   "subject": "Exclusive Summer Sale - Limited Time Only!",
+   "ring": 0
+  },
+  {
+   "id": 785,
+   "x": -46.952522973272366,
+   "y": -36.42744048193461,
+   "age": 0.4662,
+   "seed": 77594,
+   "kb": 328.7,
+   "att": null,
+   "color": "#E6D539",
+   "subject": "Exclusive Summer Sale - Limited Time Only!",
+   "ring": 0
+  },
+  {
+   "id": 1818,
+   "x": -31.898587336427102,
+   "y": -50.13958475656625,
+   "age": 1.0796,
+   "seed": 72535,
+   "kb": 121.8,
+   "att": null,
+   "color": "#E6D539",
+   "subject": "Exclusive Summer Sale - Limited Time Only!",
+   "ring": 0
+  },
+  {
+   "id": 193,
+   "x": 6.743045863106741,
+   "y": -59.04260466907431,
+   "age": 0.1146,
+   "seed": 84913,
+   "kb": 325.2,
+   "att": null,
+   "color": "#3797B8",
+   "subject": "Exclusive Summer Sale Starts Now!",
+   "ring": 0
+  },
+  {
+   "id": 639,
+   "x": 26.97111033540591,
+   "y": -52.95334777798206,
+   "age": 0.3795,
+   "seed": 13660,
+   "kb": 203.6,
+   "att": null,
+   "color": "#3797B8",
+   "subject": "Exclusive Summer Sale Starts Now!",
+   "ring": 0
+  },
+  {
+   "id": 1454,
+   "x": 42.82544777006547,
+   "y": -41.20047156179103,
+   "age": 0.8634,
+   "seed": 23274,
+   "kb": 182.5,
+   "att": null,
+   "color": "#3797B8",
+   "subject": "Exclusive Summer Sale Starts Now!",
+   "ring": 0
+  },
+  {
+   "id": 1526,
+   "x": 54.52834835981874,
+   "y": -23.625347802113083,
+   "age": 0.9062,
+   "seed": 16001,
+   "kb": 345.3,
+   "att": null,
+   "color": "#3797B8",
+   "subject": "Exclusive Summer Sale Starts Now!",
+   "ring": 0
+  },
+  {
+   "id": 1666,
+   "x": 59.40832458063528,
+   "y": -1.4658799890997614,
+   "age": 0.9893,
+   "seed": 50957,
+   "kb": 344.7,
+   "att": null,
+   "color": "#3797B8",
+   "subject": "Exclusive Summer Sale Starts Now!",
+   "ring": 0
+  },
+  {
+   "id": 730,
+   "x": -87.07741588833919,
+   "y": 7.803861903991532,
+   "age": 0.4335,
+   "seed": 85378,
+   "kb": 295.8,
+   "att": null,
+   "color": "#FF9FD4",
+   "subject": "Exclusive Summer Sale Starts Tomorrow!",
+   "ring": 1
+  },
+  {
+   "id": 979,
+   "x": -86.39491101349371,
+   "y": -13.390144486817888,
+   "age": 0.5814,
+   "seed": 17689,
+   "kb": 235,
+   "att": null,
+   "color": "#FF9FD4",
+   "subject": "Exclusive Summer Sale Starts Tomorrow!",
+   "ring": 1
+  },
+  {
+   "id": 1342,
+   "x": -81.30660171181441,
+   "y": -32.13429844393269,
+   "age": 0.7969,
+   "seed": 77360,
+   "kb": 114.2,
+   "att": null,
+   "color": "#FF9FD4",
+   "subject": "Exclusive Summer Sale Starts Tomorrow!",
+   "ring": 1
+  },
+  {
+   "id": 1690,
+   "x": -72.21436834728745,
+   "y": -49.279423927331436,
+   "age": 1.0036,
+   "seed": 91659,
+   "kb": 233.4,
+   "att": null,
+   "color": "#FF9FD4",
+   "subject": "Exclusive Summer Sale Starts Tomorrow!",
+   "ring": 1
+  },
+  {
+   "id": 1763,
+   "x": -59.37546512078298,
+   "y": -64.171105336421,
+   "age": 1.0469,
+   "seed": 19659,
+   "kb": 140.2,
+   "att": null,
+   "color": "#FF9FD4",
+   "subject": "Exclusive Summer Sale Starts Tomorrow!",
+   "ring": 1
+  },
+  {
+   "id": 1013,
+   "x": -25.31375729559921,
+   "y": -83.68148128461192,
+   "age": 0.6015,
+   "seed": 55452,
+   "kb": 222,
+   "att": null,
+   "color": "#E8A26B",
+   "subject": "Exclusive Summer Sale: 30% Off All Swimwear!",
+   "ring": 1
+  },
+  {
+   "id": 1274,
+   "x": -5.5628277599234845,
+   "y": -87.24924965706455,
+   "age": 0.7565,
+   "seed": 50182,
+   "kb": 193.2,
+   "att": null,
+   "color": "#E8A26B",
+   "subject": "Exclusive Summer Sale: 30% Off All Swimwear!",
+   "ring": 1
+  },
+  {
+   "id": 1036,
+   "x": 34.793748551104684,
+   "y": -80.20456146734958,
+   "age": 0.6152,
+   "seed": 1807,
+   "kb": 347.1,
+   "att": null,
+   "color": "#E6D539",
+   "subject": "Exclusive Summer Sale Event!",
+   "ring": 1
+  },
+  {
+   "id": 1090,
+   "x": 54.4399248697165,
+   "y": -68.40812231443707,
+   "age": 0.6473,
+   "seed": 39675,
+   "kb": 358.2,
+   "att": null,
+   "color": "#E6D539",
+   "subject": "Exclusive Summer Sale Event!",
+   "ring": 1
+  },
+  {
+   "id": 1376,
+   "x": 80.41278784232097,
+   "y": -34.309767848722515,
+   "age": 0.8171,
+   "seed": 64891,
+   "kb": 379.8,
+   "att": null,
+   "color": "#3797B8",
+   "subject": "Exclusive Summer Sale Inside!",
+   "ring": 1
+  },
+  {
+   "id": 1759,
+   "x": 86.33130336935997,
+   "y": -13.79429871196399,
+   "age": 1.0445,
+   "seed": 54630,
+   "kb": 166,
+   "att": null,
+   "color": "#3797B8",
+   "subject": "Exclusive Summer Sale Inside!",
+   "ring": 1
+  },
+  {
+   "id": 2007,
+   "x": 87.12441348531047,
+   "y": 7.260385199699101,
+   "age": 1.1918,
+   "seed": 21303,
+   "kb": 351,
+   "att": null,
+   "color": "#3797B8",
+   "subject": "Exclusive Summer Sale Inside!",
+   "ring": 1
+  },
+  {
+   "id": 538,
+   "x": 25.411329119052073,
+   "y": -2.5735858627868424,
+   "age": 0.3195,
+   "seed": 99157,
+   "kb": 168.1,
+   "att": null,
+   "color": null,
+   "subject": "Limited Time Offer: 20% Off All Summer Styles!",
+   "ring": -1
+  },
+  {
+   "id": 1255,
+   "x": -17.161305626634263,
+   "y": 23.24801441477628,
+   "age": 0.7452,
+   "seed": 20542,
+   "kb": 164.9,
+   "att": null,
+   "color": null,
+   "subject": "Exciting Summer Deals Inside!",
+   "ring": -1
+  },
+  {
+   "id": 1307,
+   "x": -0.4692830737403945,
+   "y": -37.97761323810187,
+   "age": 0.7761,
+   "seed": 50693,
+   "kb": 132,
+   "att": null,
+   "color": null,
+   "subject": "Exclusive Summer Sale Starts Today!",
+   "ring": -1
+  },
+  {
+   "id": 1634,
+   "x": 21.96886476365062,
+   "y": 36.29557798129726,
+   "age": 0.9703,
+   "seed": 91637,
+   "kb": 136.6,
+   "att": null,
+   "color": null,
+   "subject": "Exclusive Summer Sale - Limited Time Offer!",
+   "ring": -1
+  }
+ ],
+ "macros": [
+  {
+   "title": "Marketing and Customer Engagement Campaigns",
+   "x": -140.00714267493643,
+   "y": 1.714592991346277e-14,
+   "size": 0.3436,
+   "age": 0.5895,
+   "subs": [
+    {
+     "id": 179,
+     "title": "Generic Product Launch Announcements",
+     "rx": 1.3253784230565877e-14,
+     "ry": -216.45072260497767,
+     "size": 0.45,
+     "age": 0.6683
+    },
+    {
+     "id": 184,
+     "title": "Weekly Newsletter Distribution Emails",
+     "rx": 127.22654259525491,
+     "ry": -175.11231303216454,
+     "size": 0.425,
+     "age": 0.6554
+    },
+    {
+     "id": 1,
+     "title": "Premium Membership Package Purchase",
+     "rx": 205.8568701902587,
+     "ry": -66.88695172967569,
+     "size": 0.4125,
+     "age": 0.7264
+    },
+    {
+     "id": 32,
+     "title": "Platform Feature Updates and Enhancements",
+     "rx": 205.8568701902587,
+     "ry": 66.88695172967569,
+     "size": 0.375,
+     "age": 0.6776
+    },
+    {
+     "id": 80,
+     "title": "Generic Online Store Order Confirmations",
+     "rx": 127.22654259525491,
+     "ry": 175.11231303216454,
+     "size": 0.375,
+     "age": 0.473
+    },
+    {
+     "id": 34,
+     "title": "Monthly Company Newsletter Promotions",
+     "rx": 1.3253784230565877e-14,
+     "ry": 216.45072260497767,
+     "size": 0.3625,
+     "age": 0.7016
+    },
+    {
+     "id": 79,
+     "title": "Generic Post-Purchase Satisfaction Emails",
+     "rx": -127.2265425952549,
+     "ry": 175.11231303216454,
+     "size": 0.325,
+     "age": 0.6113
+    },
+    {
+     "id": 13,
+     "title": "Exclusive Virtual Wine Tasting Event Invitation",
+     "rx": -205.8568701902587,
+     "ry": 66.8869517296757,
+     "size": 0.3,
+     "age": 0.4273
+    },
+    {
+     "id": 23,
+     "title": "Generic Product Launch Announcements",
+     "rx": -205.85687019025872,
+     "ry": -66.88695172967566,
+     "size": 0.3,
+     "age": 0.5232
+    },
+    {
+     "id": 183,
+     "title": "New Product Launch Announcements",
+     "rx": -127.22654259525494,
+     "ry": -175.1123130321645,
+     "size": 0.2875,
+     "age": 0.4309
+    }
+   ]
+  },
+  {
+   "title": "Seasonal Retail Promotional Campaigns",
+   "x": 8.572964956731384e-15,
+   "y": 140.00714267493643,
+   "size": 0.6169,
+   "age": 0.5966,
+   "subs": [
+    {
+     "id": 148,
+     "title": "Summer Fashion Seasonal Discount Campaign",
+     "rx": 1.722991949973564e-14,
+     "ry": -281.38593938647097,
+     "size": 0.55,
+     "age": 0.7016
+    },
+    {
+     "id": 145,
+     "title": "Winter Sale Discount Campaign",
+     "rx": 130.7665663201964,
+     "ry": -249.1548755638396,
+     "size": 0.5,
+     "age": 0.5318
+    },
+    {
+     "id": 146,
+     "title": "Summer Sale Event Promotional Announcements",
+     "rx": 231.57608820439594,
+     "ry": -159.845432391284,
+     "size": 0.4625,
+     "age": 0.5702
+    },
+    {
+     "id": 153,
+     "title": "Exclusive Summer Sale 50% Discount Promotion",
+     "rx": 279.33431907536686,
+     "ry": -33.9173270041708,
+     "size": 0.4625,
+     "age": 0.5081
+    },
+    {
+     "id": 149,
+     "title": "Generic Retail Promotional Emails",
+     "rx": 263.10042378964397,
+     "ry": 99.78082925149728,
+     "size": 0.4125,
+     "age": 0.5925
+    },
+    {
+     "id": 147,
+     "title": "Seasonal Summer and Spring Sales",
+     "rx": 186.59339211753996,
+     "ry": 210.62040001499543,
+     "size": 0.375,
+     "age": 0.7415
+    },
+    {
+     "id": 150,
+     "title": "SAVE20 Discount Code Campaign",
+     "rx": 67.34006300545184,
+     "ry": 273.20937538603704,
+     "size": 0.375,
+     "age": 0.5877
+    },
+    {
+     "id": 151,
+     "title": "Exclusive Summer Sale Starting Tomorrow",
+     "rx": -67.34006300545168,
+     "ry": 273.20937538603704,
+     "size": 0.35,
+     "age": 0.5732
+    },
+    {
+     "id": 41,
+     "title": "Fall Collection Launch Promotional Emails",
+     "rx": -186.59339211753982,
+     "ry": 210.62040001499554,
+     "size": 0.325,
+     "age": 0.5752
+    },
+    {
+     "id": 38,
+     "title": "Exclusive Travel Deal Promotions",
+     "rx": -263.1004237896439,
+     "ry": 99.78082925149738,
+     "size": 0.3125,
+     "age": 0.534
+    },
+    {
+     "id": 152,
+     "title": "Summer Swimwear and Beach Accessories Sale",
+     "rx": -279.33431907536686,
+     "ry": -33.91732700417057,
+     "size": 0.3,
+     "age": 0.6343
+    },
+    {
+     "id": 10,
+     "title": "Exclusive Summer Sale Promotion",
+     "rx": -231.57608820439597,
+     "ry": -159.84543239128394,
+     "size": 0.25,
+     "age": 0.4264
+    },
+    {
+     "id": 144,
+     "title": "Fashion Store EXCLUSIVE20 Discount Offer",
+     "rx": -130.76656632019655,
+     "ry": -249.1548755638395,
+     "size": 0.25,
+     "age": 0.7791
+    }
+   ]
+  },
+  {
+   "title": "Recurring Payment and Billing Reminders",
+   "x": 8.572964956731384e-15,
+   "y": -140.00714267493643,
+   "size": 0.9671,
+   "age": 0.6527,
+   "subs": [
+    {
+     "id": 120,
+     "title": "Generic Monthly Subscription Payment Reminders",
+     "rx": 2.385681161501858e-14,
+     "ry": -389.6113006889598,
+     "size": 0.475,
+     "age": 0.6299
+    },
+    {
+     "id": 128,
+     "title": "Generic Monthly Subscription Payment Reminders",
+     "rx": 133.2549129029383,
+     "ry": -366.11486423221515,
+     "size": 0.4625,
+     "age": 0.5863
+    },
+    {
+     "id": 125,
+     "title": "Multiple Invoice Payment Due Reminders",
+     "rx": 250.43731667672,
+     "ry": -298.4595718691349,
+     "size": 0.45,
+     "age": 0.6228
+    },
+    {
+     "id": 14,
+     "title": "Online Store Purchase Payment Due",
+     "rx": 337.4132839981367,
+     "ry": -194.8056503444799,
+     "size": 0.425,
+     "age": 0.5828
+    },
+    {
+     "id": 24,
+     "title": "Monthly Utility Bill Payment Reminders",
+     "rx": 383.6922295796582,
+     "ry": -67.6552923630803,
+     "size": 0.3875,
+     "age": 0.6953
+    },
+    {
+     "id": 123,
+     "title": "Mid-Month Payment Reminders (15th)",
+     "rx": 383.6922295796582,
+     "ry": 67.6552923630803,
+     "size": 0.3875,
+     "age": 0.5674
+    },
+    {
+     "id": 5,
+     "title": "Internet Subscription Payment Due Reminders",
+     "rx": 337.41328399813676,
+     "ry": 194.80565034447983,
+     "size": 0.375,
+     "age": 0.703
+    },
+    {
+     "id": 33,
+     "title": "March Rent Payment Reminder",
+     "rx": 250.43731667672003,
+     "ry": 298.45957186913483,
+     "size": 0.375,
+     "age": 0.7268
+    },
+    {
+     "id": 119,
+     "title": "Generic Invoice Payment Due Reminders",
+     "rx": 133.2549129029383,
+     "ry": 366.11486423221515,
+     "size": 0.375,
+     "age": 0.5839
+    },
+    {
+     "id": 121,
+     "title": "Monthly Subscription Payment Reminders $19.99-$29.99",
+     "rx": 2.385681161501858e-14,
+     "ry": 389.6113006889598,
+     "size": 0.375,
+     "age": 0.6083
+    },
+    {
+     "id": 127,
+     "title": "Generic 3-Day Payment Due Reminders",
+     "rx": -133.25491290293823,
+     "ry": 366.1148642322152,
+     "size": 0.3625,
+     "age": 0.591
+    },
+    {
+     "id": 163,
+     "title": "Generic Payment Reminder Emails",
+     "rx": -250.43731667672,
+     "ry": 298.4595718691349,
+     "size": 0.35,
+     "age": 0.823
+    },
+    {
+     "id": 124,
+     "title": "$50 Monthly Subscription Payment Reminders",
+     "rx": -337.41328399813665,
+     "ry": 194.80565034448003,
+     "size": 0.35,
+     "age": 0.6666
+    },
+    {
+     "id": 180,
+     "title": "Electricity Bill Payment Due 15th",
+     "rx": -383.6922295796582,
+     "ry": 67.65529236308028,
+     "size": 0.3375,
+     "age": 0.6845
+    },
+    {
+     "id": 126,
+     "title": "Monthly Rent Payment 123 Main Street",
+     "rx": -383.69222957965826,
+     "ry": -67.65529236308018,
+     "size": 0.325,
+     "age": 0.4529
+    },
+    {
+     "id": 122,
+     "title": "Monthly Subscription Renewal Notices",
+     "rx": -337.4132839981367,
+     "ry": -194.80565034447994,
+     "size": 0.325,
+     "age": 0.8746
+    },
+    {
+     "id": 26,
+     "title": "Streaming Service Monthly Subscription Payment Reminders",
+     "rx": -250.43731667672003,
+     "ry": -298.45957186913483,
+     "size": 0.3,
+     "age": 0.6165
+    },
+    {
+     "id": 36,
+     "title": "Duplicate $100 Payment Confirmations",
+     "rx": -133.25491290293849,
+     "ry": -366.11486423221515,
+     "size": 0.275,
+     "age": 0.7324
+    }
+   ]
+  },
+  {
+   "title": "Account Management and Payment Updates",
+   "x": 140.00714267493643,
+   "y": 0,
+   "size": 0.9145,
+   "age": 0.659,
+   "subs": [
+    {
+     "id": 170,
+     "title": "New Payment Methods Platform Update",
+     "rx": 2.385681161501858e-14,
+     "ry": -389.6113006889598,
+     "size": 0.45,
+     "age": 0.7094
+    },
+    {
+     "id": 134,
+     "title": "Order Shipment Delay Notifications",
+     "rx": 133.2549129029383,
+     "ry": -366.11486423221515,
+     "size": 0.45,
+     "age": 0.5738
+    },
+    {
+     "id": 132,
+     "title": "Account Security Updates - Password Reset Required",
+     "rx": 250.43731667672,
+     "ry": -298.4595718691349,
+     "size": 0.4375,
+     "age": 0.6025
+    },
+    {
+     "id": 172,
+     "title": "Billing System Platform Transition Next Month",
+     "rx": 337.4132839981367,
+     "ry": -194.8056503444799,
+     "size": 0.4375,
+     "age": 0.6793
+    },
+    {
+     "id": 131,
+     "title": "Account Security Encryption Protocol Upgrades",
+     "rx": 383.6922295796582,
+     "ry": -67.6552923630803,
+     "size": 0.4125,
+     "age": 0.6238
+    },
+    {
+     "id": 130,
+     "title": "Monthly Finance Update $2,500 Balance",
+     "rx": 383.6922295796582,
+     "ry": 67.6552923630803,
+     "size": 0.4125,
+     "age": 0.755
+    },
+    {
+     "id": 133,
+     "title": "Insurance Policy Coverage Changes",
+     "rx": 337.41328399813676,
+     "ry": 194.80565034447983,
+     "size": 0.3875,
+     "age": 0.6159
+    },
+    {
+     "id": 35,
+     "title": "Customer Support Hours Policy Change",
+     "rx": 250.43731667672003,
+     "ry": 298.45957186913483,
+     "size": 0.375,
+     "age": 0.7126
+    },
+    {
+     "id": 135,
+     "title": "Order Processing Delay Notifications",
+     "rx": 133.2549129029383,
+     "ry": 366.11486423221515,
+     "size": 0.3625,
+     "age": 0.5876
+    },
+    {
+     "id": 173,
+     "title": "Generic Payment System Update (No Distinguishing Detail)",
+     "rx": 2.385681161501858e-14,
+     "ry": 389.6113006889598,
+     "size": 0.3625,
+     "age": 0.7213
+    },
+    {
+     "id": 7,
+     "title": "Two-Factor Authentication Implementation Rollout",
+     "rx": -133.25491290293823,
+     "ry": 366.1148642322152,
+     "size": 0.3375,
+     "age": 0.6621
+    },
+    {
+     "id": 43,
+     "title": "Scheduled Website Maintenance Notifications",
+     "rx": -250.43731667672,
+     "ry": 298.4595718691349,
+     "size": 0.325,
+     "age": 0.676
+    },
+    {
+     "id": 171,
+     "title": "15th of Month Payment Schedule Change",
+     "rx": -337.41328399813665,
+     "ry": 194.80565034448003,
+     "size": 0.3125,
+     "age": 0.532
+    },
+    {
+     "id": 8,
+     "title": "Order Processing Delay Notifications",
+     "rx": -383.6922295796582,
+     "ry": 67.65529236308028,
+     "size": 0.3,
+     "age": 0.7649
+    },
+    {
+     "id": 39,
+     "title": "Generic E-commerce Order Confirmations",
+     "rx": -383.69222957965826,
+     "ry": -67.65529236308018,
+     "size": 0.2875,
+     "age": 0.6766
+    },
+    {
+     "id": 37,
+     "title": "Generic Payment Confirmation Emails",
+     "rx": -337.4132839981367,
+     "ry": -194.80565034447994,
+     "size": 0.2875,
+     "age": 0.4412
+    },
+    {
+     "id": 30,
+     "title": "Subscription Plan Changes Next Month",
+     "rx": -250.43731667672003,
+     "ry": -298.45957186913483,
+     "size": 0.2875,
+     "age": 0.8608
+    },
+    {
+     "id": 19,
+     "title": "Payment Schedule and Process Changes",
+     "rx": -133.25491290293849,
+     "ry": -366.11486423221515,
+     "size": 0.2875,
+     "age": 0.6673
+    }
+   ]
+  }
+ ],
+ "NODE_RADIUS": 7,
+ "seedNote": "emailNode uses seed"
+}
