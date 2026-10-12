@@ -11,7 +11,7 @@ import { LAYOUT } from './MapScene';
 import { map } from '../geom';
 import { Callout } from '../components/Callout';
 
-export const ORG = { intro: 6, selA: 112, selB: 130, panel: 136, toGroup: 146, group: 166, fly: 172, note: 196 };
+export const ORG = { intro: 6, selA: 97, selB: 115, panel: 121, toGroup: 131, group: 151, fly: 157, note: 181 };
 const NEW = '#62E599';
 const { nodes, tCl, k2, Z3, SC, ringsR } = LAYOUT;
 const CY = 730;
@@ -81,7 +81,7 @@ export const Organise: React.FC = () => {
           {C.threads.map(h => <div key={h} style={{ width: 40, height: 40, borderRadius: 20, background: h }} />)}
         </div>
       </div>
-      <Cursor x={x} y={y} size={curSize} opacity={1 - ramp(f, ORG.group + 14, ORG.group + 24)} press={pr} />
+      <Cursor x={x} y={y} size={curSize} color="#818181" opacity={1 - ramp(f, ORG.group + 14, ORG.group + 24)} press={pr} />
       {(() => {
         // the new thread, ringed the way the app rings a group
         const a = P(...(SLOTS[0] as [number, number])), b2 = P(...(SLOTS[1] as [number, number]));
@@ -92,8 +92,8 @@ export const Organise: React.FC = () => {
             <circle cx={mx} cy={my} r={rr} fill="none" stroke="#000" strokeWidth={2} strokeDasharray={`${L * t} ${L}`} transform={`rotate(-90 ${mx} ${my})`} opacity={t > 0 ? 1 : 0} />
           </svg>
           <Callout at={[mx, my]} r={rr} dx={-40} dy={200} text="a new thread" from={ORG.note + 4} />
-          <Callout at={P(anEmail.wx, anEmail.wy) as [number, number]} r={anEmail.R * Z3} dx={-80} dy={200} text="each dot is an email" from={ORG.intro} out={ORG.selA - 8} />
-          <Callout at={P(aThread.wx, aThread.wy) as [number, number]} r={aThread.R * Z3} dx={-60} dy={-200} text="a colour is a thread" from={ORG.intro + 12} out={ORG.selA - 8} />
+          <Callout at={P(anEmail.wx, anEmail.wy) as [number, number]} r={anEmail.R * Z3} dx={-80} dy={200} text="each dot is an email" from={ORG.intro} out={ORG.group} />
+          <Callout at={P(aThread.wx, aThread.wy) as [number, number]} r={aThread.R * Z3} dx={-60} dy={-200} text="a colour is a thread" from={ORG.intro + 12} out={ORG.group} />
         </>;
       })()}
     </AbsoluteFill>

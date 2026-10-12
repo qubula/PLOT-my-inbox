@@ -15,8 +15,8 @@ The opening has no music, only sound effects. The music starts when PLOT appears
 | Segment | What happens |
 |---|---|
 | Intro | "We keep everything." Folders and files pile onto the inbox. "And read almost none of it." Email cards land on top of each other, faster and faster, until they cover the screen; they drop away and PLOT is underneath, as the music starts. |
-| "PLOT sorts your inbox by meaning." · "Themes. Spaces. Clusters." | What PLOT is, before any of it is shown. |
-| Map (9 bars) | The 4 Themes open from the centre and the camera dives Theme → Space → Cluster; the emails take their thread colours. A title names each level (Themes, Spaces, Clusters, Emails) with the path to it, as in the app, and labels point out a Theme, a Space, a Cluster, a thread. |
+| "PLOT sorts your inbox by meaning." · "Broad Themes, narrower Spaces, specific Clusters." | What PLOT is, before any of it is shown. |
+| Map (8 bars) | The 4 Themes open from the centre and the camera dives Theme → Space → Cluster; the emails take their thread colours. A depth bar at the top (Themes › Spaces › Clusters › Emails) shows the current level, with the name PLOT wrote for that group; the first name is tagged "named from your emails". Labels point out a Theme, a Space, a Cluster, a thread. |
 | "Click an email to read it." → the real app | An email is clicked in the same cluster and opens in the reading panel. |
 | Read mode | A phrase is highlighted in yellow, with "Highlight what matters." below it (no card of its own). |
 | "Old emails decay." → decay | One email ages from newest to oldest. |

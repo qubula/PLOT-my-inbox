@@ -14,11 +14,12 @@ import { map, sizeScale } from '../geom';
 
 const b = (n: number) => Math.round(n * BEAT);
 // each level holds long enough to read its label (about 2 s) before the next click
-const step = (click: number) => ({ zoom: click + 6, end: click + 42, note: click + 38, cur: click + 52, open: click + 68 });
-const C1 = b(8), C2 = b(16), C3 = b(24);
+// the cursor sets off as soon as the label is up; the label stays until the dive starts
+const step = (click: number) => ({ zoom: click + 6, end: click + 42, note: click + 38, cur: click + 40, open: click + 56 });
+const GAP = 88, C1 = GAP, C2 = 2 * GAP, C3 = 3 * GAP;
 export const T = {
   themeIn: 0, note1: 14,
-  cur1: 44, open1: 60, click1: C1, zoom1: step(C1).zoom, zoom1End: step(C1).end,
+  cur1: 30, open1: 46, click1: C1, zoom1: step(C1).zoom, zoom1End: step(C1).end,
   note2: step(C1).note, cur2: step(C1).cur, open2: step(C1).open, click2: C2, zoom2: step(C2).zoom, zoom2End: step(C2).end,
   note3: step(C2).note, cur3: step(C2).cur, open3: step(C2).open, click3: C3, zoom3: step(C3).zoom, zoom3End: C3 + 52,
   emailsFly: C3 + 30, colour: C3 + 56, note4: C3 + 66, end: segDur('map'),
@@ -164,23 +165,36 @@ export const MapScene: React.FC = () => {
   );
 
   // which level we are looking at, named at the top with the path to it (as the app does)
+  // the header: where we are in the hierarchy (current level large, the others small),
+  // and the name PLOT wrote for this group; the first name says where names come from
   const LEVELS = [
-    { from: 0, title: 'Themes', path: 'Your whole inbox' },
-    { from: T.zoom1 + 22, title: 'Spaces', path: themes[TARGET_THEME].title },
-    { from: T.zoom2 + 22, title: 'Clusters', path: `${themes[TARGET_THEME].title} / ${tSpace.title}` },
-    { from: T.zoom3 + 26, title: 'Emails', path: tCl.title },
+    { from: 0, name: 'Your whole inbox' },
+    { from: T.zoom1 + 22, name: themes[TARGET_THEME].title, tag: true },
+    { from: T.zoom2 + 22, name: tSpace.title },
+    { from: T.zoom3 + 26, name: tCl.title },
   ];
+  const DEPTH = ['Themes', 'Spaces', 'Clusters', 'Emails'];
   const li = LEVELS.reduce((a, l, i) => (f >= l.from ? i : a), 0);
   const lv = LEVELS[li];
-  const ink = li >= 2 ? '#000000' : '#FFFFFF';
-  const k = f - lv.from;
-  const slam = 1 + 0.6 * (1 - Easing.out(Easing.exp)(Math.min(1, Math.max(0, k) / 6)));
-  const pathIn = ramp(f, lv.from + 4, lv.from + 12);
-  const leave = li < 3 ? ramp(f, LEVELS[li + 1].from - 26, LEVELS[li + 1].from - 20) : 0;
+  const onLight = f >= T.zoom2 + 12;   // the light background has reached the top by then
+  const ink = onLight ? '#000000' : '#FFFFFF';
+  const nameIn = ramp(f, lv.from + 4, lv.from + 12);
+  const act = (i: number) => (i === li ? ramp(f, lv.from - 2, lv.from + 6) : i === li - 1 ? 1 - ramp(f, lv.from - 2, lv.from + 6) : 0);
   const header = (
-    <div style={{ position: 'absolute', left: 60, right: 60, top: 96, textAlign: 'center', color: ink, opacity: 1 - leave }}>
-      <div style={{ fontFamily: UI, fontWeight: 600, fontSize: 76, letterSpacing: '-0.04em', lineHeight: 1, transform: `scale(${slam})`, opacity: Math.min(1, Math.max(0, k + 1)) }}>{lv.title}</div>
-      <div style={{ marginTop: 18, fontFamily: MONO, fontSize: 24, opacity: 0.6 * pathIn, transform: `translateY(${(1 - pathIn) * 10}px)` }}>{lv.path}</div>
+    <div style={{ position: 'absolute', left: 40, right: 40, top: 96, color: ink, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, height: 70 }}>
+        {DEPTH.map((d, i) => {
+          const a = act(i);
+          return <React.Fragment key={d}>
+            {i > 0 ? <span style={{ fontFamily: MONO, fontSize: 26, opacity: 0.35 }}>›</span> : null}
+            <span style={{ fontFamily: UI, fontWeight: 600, fontSize: 30 + 34 * a, letterSpacing: '-0.035em', opacity: 0.35 + 0.65 * a }}>{d}</span>
+          </React.Fragment>;
+        })}
+      </div>
+      <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 14, fontFamily: MONO, fontSize: 24, opacity: nameIn, transform: `translateY(${(1 - nameIn) * 10}px)` }}>
+        <span style={{ opacity: 0.7 }}>{lv.name}</span>
+        {lv.tag ? <span style={{ fontSize: 19, padding: '4px 12px', borderRadius: 999, background: onLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.16)', opacity: 0.9 }}>named from your emails</span> : null}
+      </div>
     </div>
   );
 

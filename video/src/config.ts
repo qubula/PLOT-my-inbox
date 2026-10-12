@@ -29,8 +29,8 @@ export type Word = { t: string; accent?: string };
 export const SEGMENTS: Seg[] = [
   { key: 'intro', dur: REVEAL + bars(1) },   // we keep everything → the pile → and read none of it → the flood → PLOT
   { key: 'whatIs', dur: bars(1), tone: 'dark', words: [{ t: 'PLOT sorts' }, { t: 'your inbox' }, { t: 'by meaning.', accent: '#3797B8' }] },
-  { key: 'levels', dur: bars(1), tone: 'light', words: [{ t: 'Themes.' }, { t: 'Spaces.' }, { t: 'Clusters.', accent: '#E6D539' }] },
-  { key: 'map', dur: bars(9) },
+  { key: 'levels', dur: bars(1), tone: 'light', words: [{ t: 'Broad Themes,' }, { t: 'narrower Spaces,' }, { t: 'specific Clusters.', accent: '#E6D539' }] },
+  { key: 'map', dur: bars(8) },
   { key: 'openWords', dur: bars(1), tone: 'dark', words: [{ t: 'Click an email' }, { t: 'to read it.', accent: '#FF9FD4' }] },
   { key: 'uiOpen', dur: bars(2) },
   { key: 'uiRead', dur: bars(2) },
