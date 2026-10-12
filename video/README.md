@@ -16,11 +16,11 @@ The opening has no music, only sound effects. The music starts when PLOT appears
 |---|---|
 | Intro | "We keep everything." Folders and files pile onto the inbox. "And read almost none of it." Email cards land on top of each other, faster and faster, until they cover the screen; they drop away and PLOT is underneath, as the music starts. |
 | "PLOT sorts your inbox by meaning." · "Themes. Spaces. Clusters." | What PLOT is, before any of it is shown. |
-| Map (6 bars) | The 4 Themes open from the centre and the camera dives Theme → Space → Cluster; the emails take their thread colours. Labels name each level. |
+| Map (6 bars) | The 4 Themes open from the centre and the camera dives Theme → Space → Cluster; the emails take their thread colours. A title names each level (Themes, Spaces, Clusters, Emails) with the path to it, as in the app, and labels point out a Theme, a Space, a Cluster, a thread. |
 | "Click an email to read it." → the real app | An email is clicked in the same cluster and opens in the reading panel. |
-| "Highlight what matters." → read mode | A phrase is highlighted in yellow. |
-| "Old emails fade away." → decay | One email ages from newest to oldest. |
-| "You decide what goes where." → organise | Two floating emails are grouped into a new green thread. |
+| Read mode | A phrase is highlighted in yellow, with "Highlight what matters." below it (no card of its own). |
+| "Decay." → decay | One email ages from newest to oldest. |
+| "You decide what goes where." → organise | Labels say each dot is an email and a colour is a thread; then two floating emails are grouped into a new green thread. |
 | "Delete old mail. Grow your tree." → tree | Three deletes water the tree, then the rest come in a rush and it grows to full size. |
 | End (3 bars) | PLOT, tagline, note and credits, over the music's ending. |
 

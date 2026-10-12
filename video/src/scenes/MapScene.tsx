@@ -6,6 +6,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, interpolateColors, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { BEAT, C, CLUSTER, INBOX, segDur } from '../config';
 import { Callout } from '../components/Callout';
+import { MONO, UI } from '../fonts';
 import { ramp, sp, BOUNCE } from '../anim';
 import { Cursor } from '../components/Pill';
 import { EmailNode } from '../components/EmailNode';
@@ -161,6 +162,27 @@ export const MapScene: React.FC = () => {
     </>
   );
 
+  // which level we are looking at, named at the top with the path to it (as the app does)
+  const LEVELS = [
+    { from: 0, title: 'Themes', path: 'Your whole inbox' },
+    { from: T.zoom1 + 22, title: 'Spaces', path: themes[TARGET_THEME].title },
+    { from: T.zoom2 + 22, title: 'Clusters', path: `${themes[TARGET_THEME].title} / ${tSpace.title}` },
+    { from: T.zoom3 + 26, title: 'Emails', path: tCl.title },
+  ];
+  const li = LEVELS.reduce((a, l, i) => (f >= l.from ? i : a), 0);
+  const lv = LEVELS[li];
+  const ink = li >= 2 ? '#000000' : '#FFFFFF';
+  const k = f - lv.from;
+  const slam = 1 + 0.6 * (1 - Easing.out(Easing.exp)(Math.min(1, Math.max(0, k) / 6)));
+  const pathIn = ramp(f, lv.from + 4, lv.from + 12);
+  const leave = li < 3 ? ramp(f, LEVELS[li + 1].from - 26, LEVELS[li + 1].from - 20) : 0;
+  const header = (
+    <div style={{ position: 'absolute', left: 60, right: 60, top: 96, textAlign: 'center', color: ink, opacity: 1 - leave }}>
+      <div style={{ fontFamily: UI, fontWeight: 600, fontSize: 76, letterSpacing: '-0.04em', lineHeight: 1, transform: `scale(${slam})`, opacity: Math.min(1, Math.max(0, k + 1)) }}>{lv.title}</div>
+      <div style={{ marginTop: 18, fontFamily: MONO, fontSize: 24, opacity: 0.6 * pathIn, transform: `translateY(${(1 - pathIn) * 10}px)` }}>{lv.path}</div>
+    </div>
+  );
+
   return (
     <AbsoluteFill style={{ background: lightT >= 1 ? C.light : darkBg }}>
       <svg width={1080} height={1350} style={{ position: 'absolute', inset: 0 }}>
@@ -173,6 +195,7 @@ export const MapScene: React.FC = () => {
       </svg>
       {notes}
       {cursor}
+      {header}
     </AbsoluteFill>
   );
 };

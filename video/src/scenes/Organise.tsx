@@ -11,13 +11,16 @@ import { LAYOUT } from './MapScene';
 import { map } from '../geom';
 import { Callout } from '../components/Callout';
 
-export const ORG = { selA: 22, selB: 40, panel: 46, toGroup: 56, group: 76, fly: 82, note: 108 };
+export const ORG = { intro: 6, selA: 62, selB: 80, panel: 86, toGroup: 96, group: 116, fly: 122, note: 150 };
 const NEW = '#62E599';
 const { nodes, tCl, k2, Z3, SC, ringsR } = LAYOUT;
-const CY = 640;
+const CY = 730;
 const P = (x: number, y: number) => [SC.x + (x - tCl.wx) * Z3, CY + (y - tCl.wy) * Z3];
 const floating = nodes.filter(n => n.ring < 0);
 const A = floating[0], Bn = floating[1];
+// what the dots and colours mean, said before anything is touched
+const anEmail = nodes.filter(n => n.color === '#3797B8').reduce((a, b) => (b.wx > a.wx ? b : a));
+const aThread = nodes.filter(n => n.color === '#FF9FD4').reduce((a, b) => (b.wy < a.wy ? b : a));
 // empty slots on the outer ring, below the cluster (threads sit from 12 o'clock)
 const outer = Math.max(...ringsR);
 const slot = (deg: number) => [tCl.wx + Math.cos(deg * Math.PI / 180) * outer * k2, tCl.wy + Math.sin(deg * Math.PI / 180) * outer * k2];
@@ -35,7 +38,7 @@ export const Organise: React.FC = () => {
   // cursor path: A → B → Group button
   const groupBtn = [540 - 120, 1350 - 60 - 230 + 70];
   const pa = P(A.wx, A.wy), pb = P(Bn.wx, Bn.wy);
-  const m1 = sp(f, fps, 6, { damping: 26, stiffness: 90, mass: 1 }), m2 = sp(f, fps, ORG.selB - 16, { damping: 26, stiffness: 90, mass: 1 }), m3 = sp(f, fps, ORG.toGroup, { damping: 26, stiffness: 90, mass: 1 });
+  const m1 = sp(f, fps, ORG.selA - 24, { damping: 26, stiffness: 90, mass: 1 }), m2 = sp(f, fps, ORG.selB - 16, { damping: 26, stiffness: 90, mass: 1 }), m3 = sp(f, fps, ORG.toGroup, { damping: 26, stiffness: 90, mass: 1 });
   let x = 900 + (pa[0] - 900) * m1, y = 1250 + (pa[1] - 1250) * m1;
   x += (pb[0] - pa[0]) * m2; y += (pb[1] - pa[1]) * m2;
   x += (groupBtn[0] - pb[0]) * m3; y += (groupBtn[1] - pb[1]) * m3;
@@ -89,6 +92,8 @@ export const Organise: React.FC = () => {
             <circle cx={mx} cy={my} r={rr} fill="none" stroke="#000" strokeWidth={2} strokeDasharray={`${L * t} ${L}`} transform={`rotate(-90 ${mx} ${my})`} opacity={t > 0 ? 1 : 0} />
           </svg>
           <Callout at={[mx, my]} r={rr} dx={-40} dy={200} text="a new thread" from={ORG.note + 4} />
+          <Callout at={P(anEmail.wx, anEmail.wy) as [number, number]} r={anEmail.R * Z3} dx={-80} dy={200} text="each dot is an email" from={ORG.intro} out={ORG.selA - 8} />
+          <Callout at={P(aThread.wx, aThread.wy) as [number, number]} r={aThread.R * Z3} dx={-60} dy={-200} text="a colour is a thread" from={ORG.intro + 12} out={ORG.selA - 8} />
         </>;
       })()}
     </AbsoluteFill>

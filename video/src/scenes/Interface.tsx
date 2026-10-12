@@ -4,6 +4,7 @@
 import React from 'react';
 import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { C } from '../config';
+import { UI as UI_FONT } from '../fonts';
 import { ramp, sp } from '../anim';
 import { Cursor } from '../components/Pill';
 
@@ -56,6 +57,7 @@ export const UiOpen: React.FC = () => {
 
 export const UiRead: React.FC = () => {
   const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
   const cam = mix(LINE0, LINE, ramp(f, 0, 40, Easing.bezier(0.65, 0, 0.35, 1)));
   const mark = ramp(f, UI.mark, UI.mark + 14, Easing.inOut(Easing.quad));
   return (
@@ -64,6 +66,18 @@ export const UiRead: React.FC = () => {
       {/* the lines run on past the right edge: let them fade out instead of stopping hard */}
       <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 200, background: 'linear-gradient(90deg, rgba(56,56,56,0), #383838)', zIndex: 2 }} />
       {mark > 0 ? <Shot src="ui/highlight.png" cam={cam} clip={[MARK.x0 - 2, MARK.y0 - 2, MARK.x0 + (MARK.x1 - MARK.x0 + 4) * mark, MARK.y1 + 2]} /> : null}
+      {/* named while it happens, in the text cards' style, instead of a card of its own */}
+      {f >= UI.mark - 2 ? (() => {
+        const k = f - (UI.mark - 2);
+        const slam = 1 + 0.9 * (1 - Easing.out(Easing.exp)(Math.min(1, k / 6)));
+        const block = sp(f, fps, UI.mark + 2, { damping: 12, stiffness: 170, mass: 0.7 });
+        return <div style={{ position: 'absolute', left: 0, right: 0, top: 1040, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', left: -18, right: -18, top: 2, bottom: -4, background: '#F9FF8D', borderRadius: 10, transform: `rotate(${-9 + 7 * block}deg) scale(${block})` }} />
+            <span style={{ position: 'relative', display: 'inline-block', fontFamily: UI_FONT, fontWeight: 600, fontSize: 76, letterSpacing: '-0.045em', lineHeight: 1, color: '#000', transform: `scale(${slam})` }}>Highlight what matters.</span>
+          </div>
+        </div>;
+      })() : null}
     </AbsoluteFill>
   );
 };
