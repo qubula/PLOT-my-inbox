@@ -9,7 +9,7 @@
 // Repeats vary in pitch (toneFrequency) and level so they don't sound copied.
 import React from 'react';
 import { Audio, Sequence, interpolate, staticFile } from 'remotion';
-import { COPY, REVEAL, START, TOTAL, bars, sec } from './config';
+import { BAR, COPY, MUSIC_PHRASES, REVEAL, START, TOTAL, sec } from './config';
 import { lineTimes } from './components/Words';
 import { I, PILE, CARDS } from './scenes/Intro';
 import { T } from './scenes/MapScene';
@@ -22,8 +22,18 @@ const S = START;
 type Cue = { f: string; at: number; v: number; tone?: number; len?: number };
 const rnd = (i: number) => { const x = Math.sin(i * 91.7) * 43758.5; return x - Math.floor(x); };
 
-// a few emails arrive while the pile builds: not one per item, or it never stops ringing
-const mailTimes = [PILE[0].at, PILE[4].at, PILE[10].at, PILE[18].at, PILE[27].at];
+// the pile: every item makes a sound as it lands (3 frames in, at the top of its bounce):
+// emails ping, folders and files land with a soft pop; when they come faster than one
+// every 2 frames, only some get their own sound
+const pileCues: Cue[] = [];
+{ let last = -9;
+  for (const it of [...PILE].sort((a, b) => a.at - b.at)) {
+    const t = it.at + 3;
+    if (t - last < 2) continue;
+    last = t;
+    const isMail = it.kind === 'card' || it.kind === 'inbox';
+    pileCues.push(isMail ? { f: 'mail.mp3', at: t, v: 0.42, tone: 0.95 + rnd(it.i) * 0.15 } : { f: 'pop.mp3', at: t, v: 0.32, tone: 0.65 + rnd(it.i + 5) * 0.35 });
+  } }
 // a flick on the frame each card lands (it lands 4 frames after it appears);
 // once they come faster than one every 2 frames, only some get their own sound
 const LAND = 4;
@@ -34,8 +44,8 @@ export const CUES: Cue[] = [
   // the opening words, each line with a low pop as it lands
   ...lineTimes(COPY.keep).map((t, i) => ({ f: 'pop.mp3', at: I.w1 + t, v: 0.55, tone: 0.7 + i * 0.08 })),
   ...lineTimes(COPY.read, 12).map((t, i) => ({ f: 'pop.mp3', at: I.w2 + t, v: 0.55, tone: 0.7 + i * 0.08 })),
-  // we keep everything: mail arriving
-  ...mailTimes.map((at, i) => ({ f: 'mail.mp3', at, v: 0.55 - i * 0.04, tone: 1 + i * 0.03 })),
+  // we keep everything: the pile lands
+  ...pileCues,
   // and read almost none of it: one, two, three… then the whole deck
   ...flicks.map((at, i) => ({ f: 'flick.mp3', at, v: i < 3 ? 0.9 : 0.4 + rnd(i) * 0.25, tone: 0.85 + rnd(i + 9) * 0.35 })),
   { f: 'riser.mp3', at: REVEAL - sec(2.0), v: 0.45, len: sec(4) },   // it peaks 2 s in, on the reveal
@@ -63,7 +73,7 @@ export const CUES: Cue[] = [
 
 // music: in at REVEAL, from its second bar, so its last phrase ends where the end card
 // starts and its own ending plays under the end card; a little lower under the small sounds
-const MUSIC = { file: 'audio/music.mp3', level: 0.55, skip: bars(1) };
+const MUSIC = { file: 'audio/music.mp3', level: 0.55, skip: Math.round(MUSIC_PHRASES * 2 * BAR - (START.end - REVEAL)) };
 const DIPS: [number, number, number][] = [
   [S.uiRead + UI.mark - 6, S.uiRead + UI.mark + 24, 0.7],
   [S.tree + TREE.del[0] - 6, S.tree + landings[landings.length - 1] + 20, 0.75],

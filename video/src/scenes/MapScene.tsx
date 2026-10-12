@@ -13,14 +13,15 @@ import { EmailNode } from '../components/EmailNode';
 import { map, sizeScale } from '../geom';
 
 const b = (n: number) => Math.round(n * BEAT);
-const step = (click: number) => ({ zoom: click + 6, end: click + 46, note: click + 44, cur: click + 46, open: click + 56 });
-const C1 = b(5), C2 = b(10), C3 = b(15);
+// each level holds long enough to read its label (about 2 s) before the next click
+const step = (click: number) => ({ zoom: click + 6, end: click + 42, note: click + 38, cur: click + 52, open: click + 68 });
+const C1 = b(8), C2 = b(16), C3 = b(24);
 export const T = {
   themeIn: 0, note1: 14,
-  cur1: 26, open1: 42, click1: C1, zoom1: step(C1).zoom, zoom1End: step(C1).end,
+  cur1: 44, open1: 60, click1: C1, zoom1: step(C1).zoom, zoom1End: step(C1).end,
   note2: step(C1).note, cur2: step(C1).cur, open2: step(C1).open, click2: C2, zoom2: step(C2).zoom, zoom2End: step(C2).end,
   note3: step(C2).note, cur3: step(C2).cur, open3: step(C2).open, click3: C3, zoom3: step(C3).zoom, zoom3End: C3 + 52,
-  emailsFly: C3 + 30, colour: C3 + 56, note4: C3 + 72, end: segDur('map'),
+  emailsFly: C3 + 30, colour: C3 + 56, note4: C3 + 66, end: segDur('map'),
 };
 
 // ---- geometry, in one world (units = app pixels at the Themes level) ----

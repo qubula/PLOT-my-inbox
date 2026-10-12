@@ -11,7 +11,7 @@ import { LAYOUT } from './MapScene';
 import { map } from '../geom';
 import { Callout } from '../components/Callout';
 
-export const ORG = { intro: 6, selA: 62, selB: 80, panel: 86, toGroup: 96, group: 116, fly: 122, note: 150 };
+export const ORG = { intro: 6, selA: 112, selB: 130, panel: 136, toGroup: 146, group: 166, fly: 172, note: 196 };
 const NEW = '#62E599';
 const { nodes, tCl, k2, Z3, SC, ringsR } = LAYOUT;
 const CY = 730;

@@ -33,20 +33,24 @@ export const PILE = Array.from({ length: N }, (_, i) => {
 // one, two, three on the beat, then each gap is shorter than the last.
 const MAIL = INBOX.list;
 const DEAL_TIMES = (() => {
-  const t: number[] = [I.deal, I.deal + 13, I.deal + 24];
-  let gap = 9;
-  while (t[t.length - 1] < I.full - 2) { t.push(t[t.length - 1] + gap); gap = Math.max(0.45, gap * 0.78); }
+  const t: number[] = [I.deal, I.deal + 12, I.deal + 22];
+  let gap = 6;
+  while (t[t.length - 1] < I.full + 4) { t.push(t[t.length - 1] + gap); gap = Math.max(0.22, gap * 0.75); }
   return t;
 })();
-// a shuffled grid, twice over, so the cards end up covering the whole frame
+// a shuffled grid, laid three times over, so the cards end up covering the whole frame
 const CELLS = (() => {
   const out: [number, number][] = [];
-  for (let pass = 0; pass < 2; pass++) for (let r = 0; r < 11; r++) for (let c = 0; c < 3; c++) out.push([150 + c * 390 + (pass ? 195 : 0) + (rnd(r * 3 + c + pass * 50, 21) - 0.5) * 90, 60 + r * 125 + (pass ? 62 : 0) + (rnd(r * 3 + c + pass * 50, 22) - 0.5) * 50]);
+  // three offset passes of a 3 × 12 grid, so the cards pile up two or three deep everywhere
+  for (let pass = 0; pass < 3; pass++) for (let r = 0; r < 12; r++) for (let c = 0; c < 3; c++) {
+    const i = r * 3 + c + pass * 50;
+    out.push([150 + c * 390 + pass * 130 + (rnd(i, 21) - 0.5) * 90 - (pass === 2 ? 260 : 0), 30 + r * 118 + pass * 40 + (rnd(i, 22) - 0.5) * 50]);
+  }
   return out.map((p, i) => ({ p, k: rnd(i, 23) })).sort((a, b) => a.k - b.k).map(o => o.p);
 })();
 export const CARDS = DEAL_TIMES.map((at, i) => {
   const [x, y] = i < 3 ? [[540, 760], [430, 900], [650, 640]][i] : CELLS[(i - 3) % CELLS.length];
-  return { at: Math.round(at), x, y, r: (rnd(i, 24) - 0.5) * 22, w: 430 + rnd(i, 25) * 80, m: MAIL[i % MAIL.length], dot: C.threads[i % 7], attach: i % 4 === 2, unread: i % 3 === 0,
+  return { at: Math.round(at), x, y, r: (rnd(i, 24) - 0.5) * 22, w: 460 + rnd(i, 25) * 100, m: MAIL[i % MAIL.length], dot: C.threads[i % 7], attach: i % 4 === 2, unread: i % 3 === 0,
     fall: rnd(i, 26) * 6, spin: (rnd(i, 27) - 0.5) * 70, drift: (rnd(i, 28) - 0.5) * 260 };
 });
 

@@ -30,20 +30,23 @@ export const SEGMENTS: Seg[] = [
   { key: 'intro', dur: REVEAL + bars(1) },   // we keep everything → the pile → and read none of it → the flood → PLOT
   { key: 'whatIs', dur: bars(1), tone: 'dark', words: [{ t: 'PLOT sorts' }, { t: 'your inbox' }, { t: 'by meaning.', accent: '#3797B8' }] },
   { key: 'levels', dur: bars(1), tone: 'light', words: [{ t: 'Themes.' }, { t: 'Spaces.' }, { t: 'Clusters.', accent: '#E6D539' }] },
-  { key: 'map', dur: bars(6) },
+  { key: 'map', dur: bars(9) },
   { key: 'openWords', dur: bars(1), tone: 'dark', words: [{ t: 'Click an email' }, { t: 'to read it.', accent: '#FF9FD4' }] },
   { key: 'uiOpen', dur: bars(2) },
   { key: 'uiRead', dur: bars(2) },
-  { key: 'ageWords', dur: bars(1), tone: 'dark', words: [{ t: 'Decay.', accent: '#AFAFAF' }] },
+  { key: 'ageWords', dur: bars(1), tone: 'dark', words: [{ t: 'Old emails' }, { t: 'decay.', accent: '#AFAFAF' }] },
   { key: 'decay', dur: bars(2) },
   { key: 'orgWords', dur: bars(1), tone: 'light', words: [{ t: 'You decide' }, { t: 'what goes where.', accent: '#62E599' }] },
-  { key: 'organise', dur: bars(4) },
+  { key: 'organise', dur: bars(5) },
   { key: 'treeWords', dur: bars(1), tone: 'dark', words: [{ t: 'Delete old mail.' }, { t: 'Grow your tree.', accent: '#62E599' }] },
   { key: 'tree', dur: bars(2) },
   { key: 'end', dur: bars(3) },              // the music's own ending plays under the end card
 ];
 export const START: Record<string, number> = (() => { const o: Record<string, number> = {}; let t = 0; for (const s of SEGMENTS) { o[s.key] = t; t += s.dur; } return o; })();
 export const TOTAL = SEGMENTS.reduce((a, s) => a + s.dur, 0);
+// The music is built from this many 2-bar phrases (PHRASES in scripts/sync.mjs);
+// it starts part-way in so that its last phrase ends where the end card starts.
+export const MUSIC_PHRASES = 15;
 export const segDur = (key: string) => SEGMENTS.find(s => s.key === key)!.dur;
 
 // No numbers from the demo inbox on screen: every inbox is different.
