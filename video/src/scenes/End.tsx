@@ -22,7 +22,6 @@ export const End: React.FC = () => {
       </svg>
       <div style={{ position: 'absolute', bottom: 120, left: 60, right: 60, textAlign: 'center', fontFamily: MONO, fontSize: 24, color: 'rgba(0,0,0,0.6)', opacity: ramp(f, 40, 56), lineHeight: 1.7 }}>
         <div>{COPY.note}</div>
-        <div style={{ fontSize: 19, opacity: 0.8 }}>{COPY.credits}</div>
       </div>
     </AbsoluteFill>
   );

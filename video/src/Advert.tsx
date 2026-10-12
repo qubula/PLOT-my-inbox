@@ -20,7 +20,7 @@ export const Advert: React.FC = () => (
     <Series>
       {SEGMENTS.map(s => {
         const Scene = SCENES[s.key];
-        return <Series.Sequence key={s.key} durationInFrames={s.dur}>{s.words ? <Words words={s.words} tone={s.tone} /> : <Scene />}</Series.Sequence>;
+        return <Series.Sequence key={s.key} durationInFrames={s.dur}>{s.words ? <Words words={s.words} tone={s.tone} gap={s.gap} /> : <Scene />}</Series.Sequence>;
       })}
     </Series>
     <Soundtrack />

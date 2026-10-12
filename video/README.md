@@ -22,7 +22,7 @@ The opening has no music, only sound effects. The music starts when PLOT appears
 | "Old emails decay." → decay | One email ages from newest to oldest. |
 | "You decide what goes where." → organise | Labels say each dot is an email and a colour is a thread; then two floating emails are grouped into a new green thread. |
 | "Delete old mail. Grow your tree." → tree | Three deletes water the tree, then the rest come in a rush and it grows to full size. |
-| End (3 bars) | PLOT, tagline, note and credits, over the music's ending. |
+| End (3 bars) | PLOT, tagline and note, over the music's ending. Credits are below, not in the video. |
 
 The opening's folders, files and email cards are in `src/components/Desk.tsx`, text cards in `src/components/Words.tsx`, labels in `src/components/Callout.tsx`. `src/Soundtrack.tsx` lists every sound cue and what each sound is used for.
 

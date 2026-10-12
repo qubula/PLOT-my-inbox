@@ -24,12 +24,13 @@ export const C = {
 // Text cards ('words') stand on their own between the scenes, so the screen
 // never asks you to read and watch at the same time.
 export const REVEAL = 206;
-export type Seg = { key: string; dur: number; words?: Word[]; tone?: 'light' | 'dark' };
+export type Seg = { key: string; dur: number; words?: Word[]; tone?: 'light' | 'dark'; gap?: number };
 export type Word = { t: string; accent?: string };
 export const SEGMENTS: Seg[] = [
   { key: 'intro', dur: REVEAL + bars(1) },   // we keep everything → the pile → and read none of it → the flood → PLOT
   { key: 'whatIs', dur: bars(1), tone: 'dark', words: [{ t: 'PLOT sorts' }, { t: 'your inbox' }, { t: 'by meaning.', accent: '#3797B8' }] },
-  { key: 'levels', dur: bars(1), tone: 'light', words: [{ t: 'Broad Themes,' }, { t: 'narrower Spaces,' }, { t: 'specific Clusters.', accent: '#E6D539' }] },
+  // one beat longer than the other cards, lines spaced to match, so all three can be read
+  { key: 'levels', dur: Math.round(BAR * 1.25), gap: BEAT * 1.25, tone: 'light', words: [{ t: 'Broad Themes,' }, { t: 'narrower Spaces,' }, { t: 'specific Clusters.', accent: '#E6D539' }] },
   { key: 'map', dur: bars(8) },
   { key: 'openWords', dur: bars(1), tone: 'dark', words: [{ t: 'Click an email' }, { t: 'to read it.', accent: '#FF9FD4' }] },
   { key: 'uiOpen', dur: bars(2) },
@@ -69,5 +70,4 @@ export const COPY = {
   treeSub: 'Delete old emails and watch it grow',
   tagline: 'Rediscover your inbox.',
   note: 'A proof of concept, running on a demo inbox',
-  credits: 'Music by BombinSound from Pixabay · Sound effects from Pixabay and ElevenLabs',
 };
