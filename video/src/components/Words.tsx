@@ -16,7 +16,9 @@ export const Words: React.FC<Props> = ({ words, tone = 'light', gap = BEAT, wipe
   const bg = tone === 'dark' ? C.themes : C.light, ink = tone === 'dark' ? '#FFFFFF' : '#000000';
   const up = wipe ? interpolate(f, [0, 5], [100, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic) }) : 0;
   const longest = Math.max(...words.map(w => w.t.length));
-  const fs = Math.min(132, 940 / (longest * 0.54));
+  const { width, height } = useVideoConfig();
+  // as large as fits: 132 px on a 4:5 frame, scaled to the frame's height and width otherwise
+  const fs = Math.min(132 * height / 1350, (width * 0.87) / (longest * 0.54));
   const at = lineTimes(words, gap);
   return (
     <AbsoluteFill style={{ transform: `translateY(${up}%)`, background: bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: fs * 0.12 }}>

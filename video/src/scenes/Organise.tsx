@@ -1,5 +1,6 @@
 // Reshape a cluster by hand: select two floating emails and Group them into a new thread.
 import React from 'react';
+import { Scene } from '../components/Stage';
 import { AbsoluteFill, interpolateColors, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { C, COPY } from '../config';
 import { MONO, UI } from '../fonts';
@@ -46,7 +47,7 @@ export const Organise: React.FC = () => {
   const pr = Math.max(press(ORG.selA), press(ORG.selB), press(ORG.group));
   const curSize = 12 + 30 * m3;
   return (
-    <AbsoluteFill style={{ background: C.light }}>
+    <Scene bg={C.light}>
       <svg width={1080} height={1350} style={{ position: 'absolute', inset: 0 }}>
         <circle cx={cx} cy={cy} r={tCl.R * Z3 * map(tCl.age, 0, 1, 0.10, 0.85)} fill={C.cluster} />
         <circle cx={cx} cy={cy} r={tCl.R * Z3} fill="none" stroke={C.cluster} strokeWidth={1} strokeDasharray={`${0.18 * tCl.R * Z3} ${0.08 * tCl.R * Z3}`} />
@@ -96,6 +97,6 @@ export const Organise: React.FC = () => {
           <Callout at={P(aThread.wx, aThread.wy) as [number, number]} r={aThread.R * Z3} dx={-60} dy={-200} text="a colour is a thread" from={ORG.intro + 12} out={ORG.group} />
         </>;
       })()}
-    </AbsoluteFill>
+    </Scene>
   );
 };

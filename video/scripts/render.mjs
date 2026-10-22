@@ -17,7 +17,7 @@ const extra = browser ? ['--browser-executable', browser] : [];
 const run = args => execFileSync('npx', ['remotion', ...args, ...extra], { stdio: 'inherit' });
 const ffmpeg = args => execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...args], { stdio: 'inherit' });
 
-const SIZES = { 'plot-4x5': [1080, 1350] };
+const SIZES = { 'plot-4x5': [1080, 1350], 'plot-16x9': [1920, 1080] };
 const only = process.argv.find(a => a.startsWith('--only='))?.slice(7);
 const ids = only ? [only] : Object.keys(SIZES);
 const fast = process.argv.includes('--fast');

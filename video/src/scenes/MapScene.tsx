@@ -3,6 +3,7 @@
 // All positions, sizes, ages and thread colours are the app's own
 // (src/generated/cluster.json is read from the running app; see README).
 import React from 'react';
+import { Scene } from '../components/Stage';
 import { AbsoluteFill, Easing, interpolate, interpolateColors, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { BEAT, C, CLUSTER, INBOX, segDur } from '../config';
 import { Callout } from '../components/Callout';
@@ -199,8 +200,8 @@ export const MapScene: React.FC = () => {
   );
 
   return (
-    <AbsoluteFill style={{ background: lightT >= 1 ? C.light : darkBg }}>
-      <svg width={1080} height={1350} style={{ position: 'absolute', inset: 0 }}>
+    <Scene bg={lightT >= 1 ? C.light : darkBg}>
+      <svg width={1080} height={1350} style={{ position: 'absolute', inset: 0, overflow: 'visible' }}>
         {f >= T.zoom2 + 2 ? (() => { const [lx, ly] = P(tSpace.wx, tSpace.wy); return <circle cx={lx} cy={ly} r={lightR} fill={C.light} />; })() : null}
         {themeEls}
         {spaceEls}
@@ -211,6 +212,6 @@ export const MapScene: React.FC = () => {
       {notes}
       {cursor}
       {header}
-    </AbsoluteFill>
+    </Scene>
   );
 };

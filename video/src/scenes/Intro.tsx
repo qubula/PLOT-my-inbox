@@ -7,6 +7,7 @@ import { C, COPY, INBOX, REVEAL } from '../config';
 import { LOGO, UI } from '../fonts';
 import { ramp, sp, BOUNCE } from '../anim';
 import { Words } from '../components/Words';
+import { Scene, useStage } from '../components/Stage';
 import { Doc, EmailCard, Folder, rnd } from '../components/Desk';
 
 export const I = {
@@ -48,6 +49,15 @@ const CELLS = (() => {
   }
   return out.map((p, i) => ({ p, k: rnd(i, 23) })).sort((a, b) => a.k - b.k).map(o => o.p);
 })();
+// the same pattern over a wider visible area (16:9): more columns, starting at its left edge
+const cellsFor = (vx0: number, vw: number) => {
+  const cols = Math.ceil(vw / 390) + 1, out: [number, number][] = [];
+  for (let pass = 0; pass < 3; pass++) for (let r = 0; r < 12; r++) for (let c = 0; c < cols; c++) {
+    const i = r * cols + c + pass * 97;
+    out.push([vx0 + 150 + c * 390 + pass * 130 + (rnd(i, 21) - 0.5) * 90 - (pass === 2 ? 260 : 0), 30 + r * 118 + pass * 40 + (rnd(i, 22) - 0.5) * 50]);
+  }
+  return out.map((p, i) => ({ p, k: rnd(i, 23) })).sort((a, b) => a.k - b.k).map(o => o.p);
+};
 export const CARDS = DEAL_TIMES.map((at, i) => {
   const [x, y] = i < 3 ? [[540, 760], [430, 900], [650, 640]][i] : CELLS[(i - 3) % CELLS.length];
   return { at: Math.round(at), x, y, r: (rnd(i, 24) - 0.5) * 22, w: 460 + rnd(i, 25) * 100, m: MAIL[i % MAIL.length], dot: C.threads[i % 7], attach: i % 4 === 2, unread: i % 3 === 0,
@@ -64,6 +74,21 @@ const fallY = (f: number, delay: number) => { const t = Math.max(0, f - I.drop -
 export const Intro: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const stage = useStage();
+  // on a wide frame the pile spreads across it, and every card after the first three
+  // lands with a twin elsewhere, so the flood still covers the whole frame
+  const wideCells = React.useMemo(() => (stage.wide ? cellsFor(stage.vx0, stage.vw) : null), [stage.wide, stage.vx0, stage.vw]);
+  const pileX = (it: (typeof PILE)[number]) => (stage.wide && it.i > 0 ? stage.vx0 + 110 + ((it.x - 110) / 860) * (stage.vw - 220) : it.x);
+  const cards = React.useMemo(() => {
+    if (!wideCells) return CARDS;
+    const out: (typeof CARDS)[number][] = [];
+    CARDS.forEach((c, i) => {
+      if (i < 3) { out.push(c); return; }
+      const a = wideCells[(2 * (i - 3)) % wideCells.length], b = wideCells[(2 * (i - 3) + 1) % wideCells.length];
+      out.push({ ...c, x: a[0], y: a[1], w: c.w * 1.1 }, { ...c, x: b[0], y: b[1], w: c.w * 1.1, r: -c.r, m: MAIL[(i + 17) % MAIL.length], dot: C.threads[(i + 3) % 7], drift: -c.drift });
+    });
+    return out;
+  }, [wideCells]);
   const count = Math.round(interpolate(f, [I.pile + 2, I.w2 - 4], [1, 999], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.in(Easing.quad) }));
   const dark = f >= I.drop - 1;
 
@@ -71,7 +96,11 @@ export const Intro: React.FC = () => {
   const FS = 250, ADV = FS * 0.82, OY = 600;
 
   return (
-    <AbsoluteFill style={{ background: dark ? C.themes : C.light, overflow: 'hidden' }}>
+    <Scene bg={dark ? C.themes : C.light} overlay={<>
+      {/* the words get the screen to themselves */}
+      <Sequence from={I.w1} durationInFrames={I.pile - I.w1} layout="none"><Words words={COPY.keep} wipe={false} /></Sequence>
+      <Sequence from={I.w2} durationInFrames={I.deal - I.w2} layout="none"><Words words={COPY.read} tone="dark" gap={12} /></Sequence>
+    </>}>
       {/* PLOT waits underneath the pile */}
       {dark ? (
         <div style={{ position: 'absolute', inset: 0 }}>
@@ -90,7 +119,7 @@ export const Intro: React.FC = () => {
         const y = it.y - (1 - t) * 40 + fallY(f, it.i % 5);
         if (y > 1700) return null;
         return (
-          <div key={it.i} style={{ position: 'absolute', left: it.x, top: y, transform: `translate(-50%,-50%) rotate(${it.r + (f > I.drop ? (f - I.drop) * 2 : 0)}deg) scale(${t})` }}>
+          <div key={it.i} style={{ position: 'absolute', left: pileX(it), top: y, transform: `translate(-50%,-50%) rotate(${it.r + (f > I.drop ? (f - I.drop) * 2 : 0)}deg) scale(${t})` }}>
             <div style={{ position: 'relative' }}>
               {it.kind === 'inbox' ? <Folder w={it.s} color={C.themes} variant={1} tabs={[C.threads[0], C.threads[1], C.threads[2]]} label="Inbox" sub="all mail" />
                 : it.kind === 'doc' ? <Doc w={it.s * 0.62} color={it.color === C.panel || it.color === C.themes ? C.threads[0] : it.color} type={['PDF', 'DOCX', 'XLS', 'JPG'][it.i % 4]} />
@@ -103,7 +132,7 @@ export const Intro: React.FC = () => {
       }) : null}
 
       {/* the deal: each card slaps down flat and stays */}
-      {f >= I.deal && f < I.drop + 40 ? CARDS.map((c, i) => {
+      {f >= I.deal && f < I.drop + 40 ? cards.map((c, i) => {
         if (f < c.at) return null;
         const k = f - c.at;
         const slap = k < 5 ? 1.22 - 0.22 * Easing.out(Easing.quad)(k / 5) : 1 + 0.015 * Math.max(0, 1 - (k - 5) / 4) * Math.sin((k - 5) * 1.6);
@@ -116,9 +145,6 @@ export const Intro: React.FC = () => {
         </div>;
       }) : null}
 
-      {/* the words get the screen to themselves */}
-      <Sequence from={I.w1} durationInFrames={I.pile - I.w1} layout="none"><Words words={COPY.keep} wipe={false} /></Sequence>
-      <Sequence from={I.w2} durationInFrames={I.deal - I.w2} layout="none"><Words words={COPY.read} tone="dark" gap={12} /></Sequence>
-    </AbsoluteFill>
+    </Scene>
   );
 };

@@ -1,5 +1,6 @@
 // Digital decomposition: one email ages from newest to oldest.
 import React from 'react';
+import { Scene } from '../components/Stage';
 import { AbsoluteFill, Easing, useCurrentFrame } from 'remotion';
 import { C, CLUSTER, COPY } from '../config';
 import { MONO } from '../fonts';
@@ -20,7 +21,7 @@ export const Decay: React.FC = () => {
   const solidOp = 1 - halo;
   const enter = ramp(f, 0, 16);
   return (
-    <AbsoluteFill style={{ background: C.light }}>
+    <Scene bg={C.light}>
       <svg width={1080} height={1350} style={{ position: 'absolute', inset: 0, opacity: enter, transform: `scale(${0.9 + 0.1 * enter})`, transformOrigin: `${cx}px ${cy}px` }}>
         <circle cx={cx} cy={cy} r={R} fill="#D7D7D7" fillOpacity={haloAlpha(age) * halo} stroke="#A0A0A0" strokeOpacity={halo} strokeWidth={2} strokeDasharray="10 10" />
         <circle cx={cx} cy={cy} r={R} fill="#000" opacity={solidOp} />
@@ -33,6 +34,6 @@ export const Decay: React.FC = () => {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>NEWER</span><span>OLDER</span></div>
       </div>
-    </AbsoluteFill>
+    </Scene>
   );
 };

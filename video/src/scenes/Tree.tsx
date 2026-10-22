@@ -2,6 +2,7 @@
 // take their time; after that you have the idea, so the rest come in a rush
 // and the tree shoots up to full size.
 import React from 'react';
+import { Scene } from '../components/Stage';
 import { AbsoluteFill, Easing, useCurrentFrame, useVideoConfig } from 'remotion';
 import { C } from '../config';
 import { ramp, sp } from '../anim';
@@ -28,7 +29,7 @@ export const Tree: React.FC = () => {
   const wob = st > 0 ? Math.sin((f - last) * 0.9) * 3 * Math.max(0, 1 - (f - last) / 14) : 0;
   const push = 1 + 0.07 * ramp(f, 40, 80, Easing.inOut(Easing.cubic));
   return (
-    <AbsoluteFill style={{ background: C.light }}>
+    <Scene bg={C.light}>
       <div style={{ position: 'absolute', inset: 0, transform: `scale(${push})`, transformOrigin: `540px ${BASE - 200}px` }}>
         {/* the emails to clear */}
         <svg width={1080} height={1350} style={{ position: 'absolute', inset: 0 }}>
@@ -63,6 +64,6 @@ export const Tree: React.FC = () => {
           <div style={{ transform: `rotate(${wob}deg) scale(${SCALE * sx}, ${SCALE * sy})`, transformOrigin: 'bottom center' }} dangerouslySetInnerHTML={{ __html: (stages as string[])[st] }} />
         </div>
       </div>
-    </AbsoluteFill>
+    </Scene>
   );
 };

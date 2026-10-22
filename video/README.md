@@ -1,12 +1,15 @@
 # PLOT video
 
-A video for PLOT, built in [Remotion](https://www.remotion.dev). Phone first: 4:5, 1080 × 1350.
+A video for PLOT, built in [Remotion](https://www.remotion.dev), in two formats from the same code: 4:5 (1080 × 1350) for phones and 16:9 (1920 × 1080) for desktop and YouTube.
 
 ```bash
 npm install
-npm run render        # out/plot-4x5.mp4 (2x supersampled, -14 LUFS)
-npm run stills -- 100 300 --id=plot-4x5
+npm run render                          # out/plot-4x5.mp4 and out/plot-16x9.mp4 (2x supersampled, -14 LUFS)
+node scripts/render.mjs --only=plot-16x9
+npm run stills -- 100 300 --id=plot-16x9
 ```
+
+The scenes are drawn on a 4:5 stage (`src/components/Stage.tsx`). In 16:9 the stage is scaled to fit and centred, with each scene's background filling the frame. The text cards and the interface shots are laid out for the frame itself, and the opening's pile and flood spread across its full width.
 
 `scripts/sync.mjs` copies the app's fonts, the tree stages from `web/js/tree.js`, the subject lines from `web/output/` and the sounds from `../Audio/`. It also builds the music: the stomp track is 6 two-bar phrases plus an ending, and the script repeats its phrases 3 and 4 so the music runs under the whole film and still ends on its own ending. `src/generated/cluster.json` is the real layout of the cluster "Summer Fashion Seasonal Discount Campaign", read from the running app. `public/ui/` holds screenshots of the running app in that same cluster, taken with `scripts/capture-ui.mjs`.
 
