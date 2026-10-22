@@ -1,0 +1,150 @@
+// "We keep everything." → the pile → "And read almost none of it." → emails land
+// on top of each other, faster and faster, until they cover the screen → they
+// all drop away and PLOT is underneath (the music starts here).
+import React from 'react';
+import { AbsoluteFill, Easing, interpolate, Sequence, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { C, COPY, INBOX, REVEAL } from '../config';
+import { LOGO, UI } from '../fonts';
+import { ramp, sp, BOUNCE } from '../anim';
+import { Words } from '../components/Words';
+import { Scene, useStage } from '../components/Stage';
+import { Doc, EmailCard, Folder, rnd } from '../components/Desk';
+
+export const I = {
+  w1: 0, pile: 36, w2: 92, deal: 134, full: REVEAL - 10, drop: REVEAL,
+};
+
+// ---- the pile: folders, files and a few emails, arriving faster and faster ----
+const LABELS = ['Receipts', 'Newsletters', 'Travel', 'Work', 'Bills', 'Unsorted', 'Photos', 'Old stuff', 'Promotions', 'Family', 'Misc', 'Orders'];
+const PALETTE = [...C.threads, C.themes, C.panel];
+const N = 34;
+export const PILE = Array.from({ length: N }, (_, i) => {
+  const kind = i === 0 ? 'inbox' : i % 5 === 1 ? 'doc' : i % 5 === 3 ? 'card' : 'folder';
+  return {
+    kind, i,
+    x: i === 0 ? 540 : 110 + rnd(i, 1) * 860, y: i === 0 ? 800 : 430 + rnd(i, 2) * 820,
+    r: i === 0 ? -3 : (rnd(i, 3) - 0.5) * 34, s: i === 0 ? 250 : kind === 'card' ? 0.62 + rnd(i, 4) * 0.25 : 92 + rnd(i, 4) * 70,
+    color: PALETTE[Math.floor(rnd(i, 8) * PALETTE.length)], variant: Math.floor(rnd(i, 9) * 4),
+    label: rnd(i, 10) > 0.4 ? LABELS[i % LABELS.length] : undefined,
+    at: I.pile + (i === 0 ? 1 : Math.round(5 + 48 * Math.sqrt(i / N))),
+  };
+});
+
+// ---- the deal: email cards slapped onto the screen like a deck of cards ----
+// one, two, three on the beat, then each gap is shorter than the last.
+const MAIL = INBOX.list;
+const DEAL_TIMES = (() => {
+  const t: number[] = [I.deal, I.deal + 12, I.deal + 22];
+  let gap = 6;
+  while (t[t.length - 1] < I.full + 4) { t.push(t[t.length - 1] + gap); gap = Math.max(0.22, gap * 0.75); }
+  return t;
+})();
+// a shuffled grid, laid three times over, so the cards end up covering the whole frame
+const CELLS = (() => {
+  const out: [number, number][] = [];
+  // three offset passes of a 3 × 12 grid, so the cards pile up two or three deep everywhere
+  for (let pass = 0; pass < 3; pass++) for (let r = 0; r < 12; r++) for (let c = 0; c < 3; c++) {
+    const i = r * 3 + c + pass * 50;
+    out.push([150 + c * 390 + pass * 130 + (rnd(i, 21) - 0.5) * 90 - (pass === 2 ? 260 : 0), 30 + r * 118 + pass * 40 + (rnd(i, 22) - 0.5) * 50]);
+  }
+  return out.map((p, i) => ({ p, k: rnd(i, 23) })).sort((a, b) => a.k - b.k).map(o => o.p);
+})();
+// the same pattern over a wider visible area (16:9): more columns, starting at its left edge
+const cellsFor = (vx0: number, vw: number) => {
+  const cols = Math.ceil(vw / 390) + 1, out: [number, number][] = [];
+  for (let pass = 0; pass < 3; pass++) for (let r = 0; r < 12; r++) for (let c = 0; c < cols; c++) {
+    const i = r * cols + c + pass * 97;
+    out.push([vx0 + 150 + c * 390 + pass * 130 + (rnd(i, 21) - 0.5) * 90 - (pass === 2 ? 260 : 0), 30 + r * 118 + pass * 40 + (rnd(i, 22) - 0.5) * 50]);
+  }
+  return out.map((p, i) => ({ p, k: rnd(i, 23) })).sort((a, b) => a.k - b.k).map(o => o.p);
+};
+export const CARDS = DEAL_TIMES.map((at, i) => {
+  const [x, y] = i < 3 ? [[540, 760], [430, 900], [650, 640]][i] : CELLS[(i - 3) % CELLS.length];
+  return { at: Math.round(at), x, y, r: (rnd(i, 24) - 0.5) * 22, w: 460 + rnd(i, 25) * 100, m: MAIL[i % MAIL.length], dot: C.threads[i % 7], attach: i % 4 === 2, unread: i % 3 === 0,
+    fall: rnd(i, 26) * 6, spin: (rnd(i, 27) - 0.5) * 70, drift: (rnd(i, 28) - 0.5) * 260 };
+});
+
+const Badge: React.FC<{ n: string }> = ({ n }) => (
+  <div style={{ position: 'absolute', right: -22, top: -26, minWidth: 64, height: 64, padding: '0 14px', boxSizing: 'border-box', borderRadius: 32, background: C.attach, color: '#fff', fontFamily: UI, fontWeight: 700, fontSize: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{n}</div>
+);
+
+// everything falls away at the drop, each piece a little later than the last
+const fallY = (f: number, delay: number) => { const t = Math.max(0, f - I.drop - delay); return t * t * 2.4; };
+
+export const Intro: React.FC = () => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const stage = useStage();
+  // on a wide frame the pile spreads across it, and every card after the first three
+  // lands with a twin elsewhere, so the flood still covers the whole frame
+  const wideCells = React.useMemo(() => (stage.wide ? cellsFor(stage.vx0, stage.vw) : null), [stage.wide, stage.vx0, stage.vw]);
+  const pileX = (it: (typeof PILE)[number]) => (stage.wide && it.i > 0 ? stage.vx0 + 110 + ((it.x - 110) / 860) * (stage.vw - 220) : it.x);
+  const cards = React.useMemo(() => {
+    if (!wideCells) return CARDS;
+    const out: (typeof CARDS)[number][] = [];
+    CARDS.forEach((c, i) => {
+      if (i < 3) { out.push(c); return; }
+      const a = wideCells[(2 * (i - 3)) % wideCells.length], b = wideCells[(2 * (i - 3) + 1) % wideCells.length];
+      out.push({ ...c, x: a[0], y: a[1], w: c.w * 1.1 }, { ...c, x: b[0], y: b[1], w: c.w * 1.1, r: -c.r, m: MAIL[(i + 17) % MAIL.length], dot: C.threads[(i + 3) % 7], drift: -c.drift });
+    });
+    return out;
+  }, [wideCells]);
+  const count = Math.round(interpolate(f, [I.pile + 2, I.w2 - 4], [1, 999], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.in(Easing.quad) }));
+  const dark = f >= I.drop - 1;
+
+  // the wordmark, centred a little above the middle of the frame
+  const FS = 250, ADV = FS * 0.82, OY = 600;
+
+  return (
+    <Scene bg={dark ? C.themes : C.light} overlay={<>
+      {/* the words get the screen to themselves */}
+      <Sequence from={I.w1} durationInFrames={I.pile - I.w1} layout="none"><Words words={COPY.keep} wipe={false} /></Sequence>
+      <Sequence from={I.w2} durationInFrames={I.deal - I.w2} layout="none"><Words words={COPY.read} tone="dark" gap={12} /></Sequence>
+    </>}>
+      {/* PLOT waits underneath the pile */}
+      {dark ? (
+        <div style={{ position: 'absolute', inset: 0 }}>
+          {'PLOT'.split('').map((ch, i) => {
+            const t = sp(f, fps, I.drop + 4 + i * 3, BOUNCE);
+            return <div key={i} style={{ position: 'absolute', left: 540 + (i - 2) * ADV, top: OY - FS * 0.5, width: ADV, textAlign: 'center', fontFamily: LOGO, fontSize: FS, lineHeight: 1, color: '#fff',
+              transform: `translateY(${(1 - t) * 60}px) scale(${0.7 + 0.3 * t})`, opacity: Math.min(1, t * 1.4) }}>{ch}</div>;
+          })}
+        </div>
+      ) : null}
+
+      {/* the pile */}
+      {f >= I.pile && f < I.drop + 40 ? PILE.map(it => {
+        const t = spring({ frame: f - it.at, fps, config: BOUNCE });
+        if (t <= 0.001) return null;
+        const y = it.y - (1 - t) * 40 + fallY(f, it.i % 5);
+        if (y > 1700) return null;
+        return (
+          <div key={it.i} style={{ position: 'absolute', left: pileX(it), top: y, transform: `translate(-50%,-50%) rotate(${it.r + (f > I.drop ? (f - I.drop) * 2 : 0)}deg) scale(${t})` }}>
+            <div style={{ position: 'relative' }}>
+              {it.kind === 'inbox' ? <Folder w={it.s} color={C.themes} variant={1} tabs={[C.threads[0], C.threads[1], C.threads[2]]} label="Inbox" sub="all mail" />
+                : it.kind === 'doc' ? <Doc w={it.s * 0.62} color={it.color === C.panel || it.color === C.themes ? C.threads[0] : it.color} type={['PDF', 'DOCX', 'XLS', 'JPG'][it.i % 4]} />
+                  : it.kind === 'card' ? <div style={{ transform: `scale(${it.s})` }}><EmailCard subject={MAIL[it.i % MAIL.length].s} from={MAIL[it.i % MAIL.length].from} date={MAIL[it.i % MAIL.length].d} dot={C.threads[it.i % 7]} w={340} /></div>
+                    : <Folder w={it.s} color={it.color} variant={it.variant} label={it.s > 120 ? it.label : undefined} />}
+              {it.i === 0 ? <Badge n={count >= 999 ? '999+' : String(count)} /> : null}
+            </div>
+          </div>
+        );
+      }) : null}
+
+      {/* the deal: each card slaps down flat and stays */}
+      {f >= I.deal && f < I.drop + 40 ? cards.map((c, i) => {
+        if (f < c.at) return null;
+        const k = f - c.at;
+        const slap = k < 5 ? 1.22 - 0.22 * Easing.out(Easing.quad)(k / 5) : 1 + 0.015 * Math.max(0, 1 - (k - 5) / 4) * Math.sin((k - 5) * 1.6);
+        const fy = fallY(f, c.fall);
+        if (c.y + fy > 1800) return null;
+        const fr = f > I.drop ? (f - I.drop) : 0;
+        return <div key={i} style={{ position: 'absolute', left: c.x + fr * c.drift / 30, top: c.y + fy, transform: `translate(-50%,-50%) rotate(${c.r + fr * c.spin / 30}deg) scale(${slap})`,
+          filter: k < 5 ? `drop-shadow(0 ${18 * (1 - k / 5)}px 18px rgba(0,0,0,0.18))` : undefined }}>
+          <EmailCard subject={c.m.s} from={c.m.from} date={c.m.d} dot={c.dot} attach={c.attach} unread={c.unread} w={c.w} />
+        </div>;
+      }) : null}
+
+    </Scene>
+  );
+};

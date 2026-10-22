@@ -23,7 +23,7 @@ A proof of concept that groups email into clusters of increasing specificity, fr
 ![Netlify](https://img.shields.io/badge/deployed%20on-Netlify-000000?style=flat-square&logo=netlify&logoColor=white)
 [![License](https://img.shields.io/badge/license-free%20for%20non--commercial%20use-000000?style=flat-square)](#license)
 
-[**Try it live**](https://plot-demo.netlify.app/) · [Watch the demo](https://www.youtube.com/watch?v=20Sa4PoC53U) · [Design board](https://www.figma.com/design/Pdso8S5FWJJRf3VPq0Ei8E/U10_Testing?node-id=246-4825) · [How it works](#how-it-works) · [Run it locally](#run-it-locally)
+[**Try it live**](https://plot-demo.netlify.app/) · [Watch the overview](https://youtu.be/Jay1IRyHP4s) · [Watch the walkthrough](https://www.youtube.com/watch?v=20Sa4PoC53U) · [Design board](https://www.figma.com/design/Pdso8S5FWJJRf3VPq0Ei8E/U10_Testing?node-id=246-4825) · [How it works](#how-it-works) · [Run it locally](#run-it-locally)
 
 <br>
 
@@ -45,7 +45,19 @@ A proof of concept that groups email into clusters of increasing specificity, fr
 
 <br>
 
-## See it in action: Video Walkthrough
+## See it in action
+
+### Overview
+
+<div align="center">
+  <a href="https://youtu.be/Jay1IRyHP4s">
+    <img src="docs/images/overview-thumbnail.jpg" alt="Watch the PLOT overview on YouTube" width="720">
+  </a>
+  <br>
+  <sub>A one-minute overview of what PLOT is and what it does. Opens on YouTube.</sub>
+</div>
+
+### Walkthrough
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=20Sa4PoC53U">
